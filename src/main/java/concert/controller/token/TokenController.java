@@ -1,7 +1,12 @@
 package concert.controller.token;
 
+import concert.application.WaitingTokenFacade;
 import concert.controller.token.response.IssueTokenResponse;
+import concert.controller.token.response.WaitingTokenIssueTokenResponse;
+import concert.domain.token.WaitingToken;
+import concert.domain.token.WaitingTokenService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,8 +16,10 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class TokenController {
 
-    @PostMapping("/request-token")
-    public IssueTokenResponse issueToken(){
-        return new IssueTokenResponse("정인호","ACTIVE", LocalDateTime.now().plusHours(1));
+    private final WaitingTokenFacade waitingTokenFacade;
+
+    @PostMapping("/token/{userId}")
+    public WaitingTokenIssueTokenResponse issueToken(@PathVariable Long userId){
+        return WaitingTokenIssueTokenResponse.of(waitingTokenFacade.issueToken(userId));
     }
 }

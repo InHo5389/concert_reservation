@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
 
-    @GetMapping("/points")
+    @GetMapping("/concerts/points")
     public UserPointResponse getPoint(){
         return new UserPointResponse("정인호",10000);
     }
 
-    @PostMapping("/points")
+    @PostMapping("/concerts/points")
     public UserPointResponse getChargePoint(){
         return new UserPointResponse("정인호",20000);
     }
