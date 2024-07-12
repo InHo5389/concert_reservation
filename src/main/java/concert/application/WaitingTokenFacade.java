@@ -1,6 +1,7 @@
 package concert.application;
 
 import concert.domain.token.WaitingTokenService;
+import concert.domain.token.dto.WaitingOrderDto;
 import concert.domain.token.dto.WaitingTokenIssueTokenDto;
 import concert.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,5 +19,10 @@ public class WaitingTokenFacade {
     public WaitingTokenIssueTokenDto issueToken(Long userId){
         userService.findUser(userId);
         return waitingTokenService.issueToken(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public WaitingOrderDto getWaitingOrder(String jwtToken){
+        return waitingTokenService.getWaitingOrder(jwtToken);
     }
 }

@@ -29,4 +29,9 @@ public class WaitingTokenRepositoryImpl implements WaitingTokenRepository {
         return watingTokenJpaRepository.findByUserId(userId);
     }
 
+    @Override
+    public long findLastActiveTokenBy(long userId) {
+        return watingTokenJpaRepository.findLastActiveTokenBy(userId);
+    }
+
 }

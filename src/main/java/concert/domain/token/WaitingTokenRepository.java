@@ -7,4 +7,5 @@ public interface WaitingTokenRepository {
     int countByTokenStatus(TokenStatus tokenStatus);
     WaitingToken save(WaitingToken waitingToken);
     Optional<WaitingToken> findByUserId(long userId);
+    long findLastActiveTokenBy(long userId);
 }
