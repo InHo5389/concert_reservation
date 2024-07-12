@@ -30,7 +30,7 @@ class UserServiceTest {
         User user = new User(userId,"1@naver.com", "1234", "이노", "01012345678", userAmount);
         userRepository.save(user);
         //when
-        AmountHistory amountHistory = userService.chargeAmount(userId, chargeAmount);
+        AmountChargeDto amountHistory = userService.chargeAmount(userId, chargeAmount);
         //then
         Assertions.assertThat(amountHistory).extracting("useAmount","remainAmount","status")
                 .contains(chargeAmount,chargeAmount+userAmount,AmountStatus.CHARGE);
