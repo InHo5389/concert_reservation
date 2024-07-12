@@ -35,9 +35,6 @@ class ConcertFacadeTest {
     private WaitingTokenValidator waitingTokenValidator;
 
     @Autowired
-    private ConcertScheduleRepository concertScheduleRepository;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -49,6 +46,7 @@ class ConcertFacadeTest {
     @Autowired
     private ConcertRepository concertRepository;
 
+
     @Test
     @DisplayName("토큰이 Active상태일때 콘서트 스케줄을 조회할 수 있다..")
     void getConcertSchedule(){
@@ -58,10 +56,10 @@ class ConcertFacadeTest {
 
         concertRepository.save(new Concert(1L,"임영웅 콘서트" , "임영웅"));
 
-        concertScheduleRepository.save(new ConcertSchedule(1L,1L, LocalDateTime.now().minusDays(1)));
+        concertRepository.save(new ConcertSchedule(1L,1L, LocalDateTime.now().minusDays(1)));
 
-        concertScheduleRepository.save(new ConcertSchedule(2L,1L, LocalDateTime.now().plusDays(1)));
-        concertScheduleRepository.save(new ConcertSchedule(3L,1L, LocalDateTime.now().plusDays(1)));
+        concertRepository.save(new ConcertSchedule(2L,1L, LocalDateTime.now().plusDays(1)));
+        concertRepository.save(new ConcertSchedule(3L,1L, LocalDateTime.now().plusDays(1)));
 
         String token = waitingTokenProvider.issueToken(1L, now, 5);
         waitingTokenRepository.save(new WaitingToken(1L,1L, TokenStatus.ACTIVE,now,now.plusMinutes(5)));
@@ -80,10 +78,10 @@ class ConcertFacadeTest {
 
         concertRepository.save(new Concert(1L,"임영웅 콘서트" , "임영웅"));
 
-        concertScheduleRepository.save(new ConcertSchedule(1L,1L, LocalDateTime.now().minusDays(1)));
+        concertRepository.save(new ConcertSchedule(1L,1L, LocalDateTime.now().minusDays(1)));
 
-        concertScheduleRepository.save(new ConcertSchedule(2L,1L, LocalDateTime.now().plusDays(1)));
-        concertScheduleRepository.save(new ConcertSchedule(3L,1L, LocalDateTime.now().plusDays(1)));
+        concertRepository.save(new ConcertSchedule(2L,1L, LocalDateTime.now().plusDays(1)));
+        concertRepository.save(new ConcertSchedule(3L,1L, LocalDateTime.now().plusDays(1)));
 
         String token = waitingTokenProvider.issueToken(1L, now, 5);
         waitingTokenRepository.save(new WaitingToken(1L,1L, TokenStatus.WAIT,now,now.plusMinutes(5)));

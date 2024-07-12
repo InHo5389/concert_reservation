@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ConcertService {
 
-    private final ConcertScheduleRepository concertScheduleRepository;
     private final ConcertRepository concertRepository;
 
     public List<ConcertSchedule> availableDates(Long concertId){
@@ -20,8 +19,16 @@ public class ConcertService {
                 .orElseThrow(() -> new BusinessException("해당 콘서트가 없습니다."));
 
         LocalDateTime now = LocalDateTime.now();
-        List<ConcertSchedule> concertScheduleList = concertScheduleRepository.findAll();
+        List<ConcertSchedule> concertScheduleList = concertRepository.findAll();
         return concertScheduleList.stream().filter(schedule -> schedule.getConcertId().equals(concertId) && schedule.availableConcert(now))
                 .collect(Collectors.toList());
+    }
+
+    public List<Seat> availableSeats(Long concertId, LocalDateTime concertDate){
+        Concert concert = concertRepository.findById(concertId)
+                .orElseThrow(() -> new BusinessException("해당 콘서트가 없습니다."));
+
+        ConcertSchedule concertSchedule = concertRepository.findByConcertIdAndConcertDateTime(concertId, concertDate);
+        return concertRepository.findByConcertScheduleIdAndSeatStatus(concertSchedule.getConcertId(), SeatStatus.AVAILABLE);
     }
 }

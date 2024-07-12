@@ -13,5 +13,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class AvailableSeatRequest {
 
+    private Long concertId;
     private LocalDateTime concertDate;
 }
