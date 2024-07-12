@@ -2,6 +2,7 @@ package concert.domain.reservation;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface ReservationRepository {
 
@@ -9,4 +10,7 @@ public interface ReservationRepository {
     Reservation save(Reservation reservation);
     List<Reservation> findByStatusAndExpirationTimeBefore(ReservationStatus reservationStatus, LocalDateTime localDateTime);
     void delete(Reservation reservation);
+    Optional<Reservation> findById(Long reservationId);
+
+    Payment save(Payment payment);
 }

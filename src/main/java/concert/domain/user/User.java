@@ -33,4 +33,11 @@ public class User {
     public int chargeAmount(long amount) {
         return this.amount += amount;
     }
+
+    public int decreaseAmount(long amount){
+        return this.amount -= amount;
+    }
+    public boolean availablePay(long amount){
+        return this.amount > amount;
+    }
 }

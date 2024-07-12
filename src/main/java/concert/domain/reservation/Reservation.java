@@ -1,10 +1,7 @@
 package concert.domain.reservation;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -27,9 +24,11 @@ public class Reservation {
     private LocalDateTime concertDate;
     private int reservationAmount;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private LocalDateTime expirationTime;
+
 }
