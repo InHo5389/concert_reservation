@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 public enum TokenStatus {
     ACTIVE("활성중"),
     WAIT("대기중"),
-    EXPIRE("만료됨");
+    EXPIRED("만료됨");
 
     private final String text;
 }

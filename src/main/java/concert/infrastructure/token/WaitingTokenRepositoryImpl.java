@@ -4,8 +4,11 @@ import concert.domain.token.TokenStatus;
 import concert.domain.token.WaitingToken;
 import concert.domain.token.WaitingTokenRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -32,6 +35,21 @@ public class WaitingTokenRepositoryImpl implements WaitingTokenRepository {
     @Override
     public long findLastActiveTokenBy(long userId) {
         return watingTokenJpaRepository.findLastActiveTokenBy(userId);
+    }
+
+    @Override
+    public List<WaitingToken> findByExpiredAtBeforeAndTokenStatus(LocalDateTime now, TokenStatus status) {
+        return watingTokenJpaRepository.findByExpiredAtBeforeAndTokenStatus(now,status);
+    }
+
+    @Override
+    public List<WaitingToken> saveAll(List<WaitingToken> waitingTokenList) {
+        return watingTokenJpaRepository.saveAll(waitingTokenList);
+    }
+
+    @Override
+    public List<WaitingToken> findByTokenStatusOrderByCreatedAt(TokenStatus status, Pageable pageable) {
+        return watingTokenJpaRepository.findByTokenStatusOrderByCreatedAt(status,pageable);
     }
 
 }

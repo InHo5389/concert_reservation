@@ -38,4 +38,8 @@ public class WaitingToken {
     private static TokenStatus validTokenStatus(int activeTokenCount,int fixActiveCount) {
         return activeTokenCount < fixActiveCount ? TokenStatus.ACTIVE : TokenStatus.WAIT;
     }
+
+    public void changeTokenStatus(TokenStatus tokenStatus){
+        this.tokenStatus = tokenStatus;
+    }
 }
