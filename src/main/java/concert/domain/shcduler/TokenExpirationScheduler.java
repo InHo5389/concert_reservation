@@ -1,5 +1,8 @@
 package concert.domain.shcduler;
 
+import concert.domain.reservation.Reservation;
+import concert.domain.reservation.ReservationRepository;
+import concert.domain.reservation.ReservationStatus;
 import concert.domain.token.TokenStatus;
 import concert.domain.token.WaitingToken;
 import concert.domain.token.WaitingTokenRepository;
@@ -19,6 +22,7 @@ import java.util.List;
 public class TokenExpirationScheduler {
 
     private final WaitingTokenRepository waitingTokenRepository;
+    private final ReservationRepository reservationRepository;
 
     /**
      * 만료된 토큰 상태를 EXPIRED 변경하는 스케줄러
@@ -59,6 +63,20 @@ public class TokenExpirationScheduler {
 
             waitingTokenRepository.saveAll(waitingTokens);
             log.info("Activated {} tokens", waitingTokens.size());
+        }
+    }
+
+    /**
+     * 콘서트를 예약하고 5분동안 처리가 되지 않으면 삭제해주는 스케줄러
+     */
+    @Scheduled(fixedRate = 60000) // 1분마다 실행
+    @Transactional
+    public void cleanupExpiredReservations() {
+        List<Reservation> expiredReservations = reservationRepository
+                .findByStatusAndExpirationTimeBefore(ReservationStatus.RESERVED, LocalDateTime.now());
+
+        for (Reservation reservation : expiredReservations) {
+            reservationRepository.delete(reservation);
         }
     }
 }

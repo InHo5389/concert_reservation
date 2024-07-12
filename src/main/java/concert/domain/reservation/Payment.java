@@ -1,4 +1,4 @@
-package concert.domain.concert;
+package concert.domain.reservation;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,20 +6,24 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Seat {
+public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long concertScheduleId;
-    private int seatNumber;
+    private Long reservationId;
+    private int paymentAmount;
+
     @Enumerated(EnumType.STRING)
-    private SeatStatus seatStatus;
-    private int seatPrice;
+    private PaymentStatus status;
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
 }

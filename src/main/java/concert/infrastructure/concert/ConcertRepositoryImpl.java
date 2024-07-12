@@ -50,4 +50,9 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     public Seat save(Seat seat) {
         return seatJpaRepository.save(seat);
     }
+
+    @Override
+    public Optional<Seat> findBySeatId(Long seatId) {
+        return seatJpaRepository.findById(seatId);
+    }
 }
