@@ -39,10 +39,10 @@ class ConcertServiceTest {
         given(concertRepository.findByConcertIdAndConcertDateTime(concertId, now))
                 .willReturn(schedule);
 
-        Seat seat1 = new Seat(1L, 1L, 1, SeatStatus.AVAILABLE);
-        Seat seat2 = new Seat(1L, 1L, 2, SeatStatus.AVAILABLE);
-        Seat seat3 = new Seat(1L, 1L, 3, SeatStatus.RESERVED);
-        Seat seat4 = new Seat(1L, 1L, 4, SeatStatus.RESERVED);
+        Seat seat1 = new Seat(1L, 1L, 1, SeatStatus.AVAILABLE,2000);
+        Seat seat2 = new Seat(1L, 1L, 2, SeatStatus.AVAILABLE,2000);
+        Seat seat3 = new Seat(1L, 1L, 3, SeatStatus.RESERVED,2000);
+        Seat seat4 = new Seat(1L, 1L, 4, SeatStatus.RESERVED,2000);
         given(concertRepository.findByConcertScheduleIdAndSeatStatus(schedule.getConcertId(), SeatStatus.AVAILABLE))
                 .willReturn(List.of(seat1,seat2,seat3,seat4));
         //when

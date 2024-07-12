@@ -1,5 +1,6 @@
 package concert.infrastructure.user;
 
+import concert.domain.user.AmountHistory;
 import concert.domain.user.User;
 import concert.domain.user.UserRepository;
 import concert.infrastructure.user.UserJpaRepository;
@@ -13,7 +14,7 @@ import java.util.Optional;
 public class UserRepositoryImpl implements UserRepository {
 
     private final UserJpaRepository userJpaRepository;
-
+    private final AmountJpaHistory amountJpaHistory;
     @Override
     public Optional<User> findById(Long id) {
         return userJpaRepository.findById(id);
@@ -27,5 +28,10 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User save(User user) {
         return userJpaRepository.save(user);
+    }
+
+    @Override
+    public AmountHistory save(AmountHistory amountHistory) {
+        return amountJpaHistory.save(amountHistory);
     }
 }

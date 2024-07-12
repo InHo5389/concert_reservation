@@ -27,11 +27,11 @@ class SeatJpaRepositoryTest {
     @DisplayName("이용가능한 좌석들을 보여준다.")
     void availableSeatsCount(){
         //given
-        seatJpaRepository.save(new Seat(1L,1L,1, SeatStatus.AVAILABLE));
-        seatJpaRepository.save(new Seat(2L,1L,2, SeatStatus.AVAILABLE));
-        seatJpaRepository.save(new Seat(3L,1L,3, SeatStatus.RESERVED));
-        seatJpaRepository.save(new Seat(4L,1L,4, SeatStatus.RESERVED));
-        seatJpaRepository.save(new Seat(5L,1L,5, SeatStatus.RESERVED));
+        seatJpaRepository.save(new Seat(1L,1L,1, SeatStatus.AVAILABLE,2000));
+        seatJpaRepository.save(new Seat(2L,1L,2, SeatStatus.AVAILABLE,2000));
+        seatJpaRepository.save(new Seat(3L,1L,3, SeatStatus.RESERVED,2000));
+        seatJpaRepository.save(new Seat(4L,1L,4, SeatStatus.RESERVED,2000));
+        seatJpaRepository.save(new Seat(5L,1L,5, SeatStatus.RESERVED,2000));
         //when
         //then
         List<Seat> seatList = concertRepository.findByConcertScheduleIdAndSeatStatus(1L, SeatStatus.AVAILABLE);
