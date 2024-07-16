@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+import static concert.domain.token.jwt.WatingTokenUtil.*;
+
 @Component
 public class WaitingTokenProvider {
 
@@ -16,7 +18,7 @@ public class WaitingTokenProvider {
                 .withSubject("concert_token")
                 .withExpiresAt(now.plusMinutes(expirationMinutes).atZone(ZoneId.systemDefault()).toInstant())
                 .withClaim("userId", userId)
-                .sign(Algorithm.HMAC512("concert"));
-        return "Bearer " + jwtToken;
+                .sign(Algorithm.HMAC512(SECRET_KEY));
+        return TOKEN_PREFIX + jwtToken;
     }
 }

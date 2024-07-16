@@ -34,7 +34,7 @@ public class TokenExpirationScheduler {
         List<WaitingToken> expiredTokens = waitingTokenRepository.findByExpiredAtBeforeAndTokenStatus(now, TokenStatus.ACTIVE);
 
         for (WaitingToken token : expiredTokens) {
-            token.changeTokenStatus(TokenStatus.EXPIRED);
+            token.expire();
             log.info("Token expired: {}", token.getId());
         }
 
@@ -53,11 +53,11 @@ public class TokenExpirationScheduler {
 
         if (activeTokenCount < 3) {
             int tokensToActivate = 3 - activeTokenCount;
-            PageRequest pageRequest = PageRequest.of(0,tokensToActivate);
+            PageRequest pageRequest = PageRequest.of(0, tokensToActivate);
             List<WaitingToken> waitingTokens = waitingTokenRepository.findByTokenStatusOrderByCreatedAt(TokenStatus.WAIT, pageRequest);
 
             for (WaitingToken token : waitingTokens) {
-                token.changeTokenStatus(TokenStatus.ACTIVE);
+                token.activate();
                 log.info("Activated token: {}", token.getId());
             }
 

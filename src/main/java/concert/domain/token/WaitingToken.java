@@ -26,7 +26,8 @@ public class WaitingToken {
     private LocalDateTime createdAt;
     private LocalDateTime expiredAt;
 
-    public static WaitingToken issue(LocalDateTime now,Long userId, int activeTokenCount,int fixActiveCount ,int expirationMinutes) {
+    public static WaitingToken issue(Long userId, int activeTokenCount,int fixActiveCount ,int expirationMinutes) {
+        LocalDateTime now = LocalDateTime.now();
         return WaitingToken.builder()
                 .userId(userId)
                 .tokenStatus(validTokenStatus(activeTokenCount,fixActiveCount))
@@ -39,7 +40,11 @@ public class WaitingToken {
         return activeTokenCount < fixActiveCount ? TokenStatus.ACTIVE : TokenStatus.WAIT;
     }
 
-    public void changeTokenStatus(TokenStatus tokenStatus){
-        this.tokenStatus = tokenStatus;
+    public void activate() {
+        this.tokenStatus = TokenStatus.ACTIVE;
+    }
+
+    public void expire() {
+        this.tokenStatus = TokenStatus.EXPIRED;
     }
 }

@@ -1,5 +1,6 @@
 package concert.domain.token;
 
+import concert.common.exception.BusinessException;
 import concert.domain.token.dto.WaitingOrderDto;
 import concert.domain.token.dto.WaitingTokenIssueTokenDto;
 import concert.domain.token.jwt.WaitingTokenProvider;
@@ -7,9 +8,7 @@ import concert.domain.token.jwt.WaitingTokenValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
-import static concert.domain.token.TokenStatus.ACTIVE;
+import static concert.domain.token.TokenStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -19,23 +18,42 @@ public class WaitingTokenService {
     private final WaitingTokenProvider tokenProvider;
     private final WaitingTokenValidator tokenValidator;
 
-    private static final int expirationMinutes = 5;
-    private static final int fixActiveCount = 2;
+    private static final int EXPIRATION_MINUTES = 5;
+    private static final int FIX_ACTIVE_COUNT = 2;
 
 
     public WaitingTokenIssueTokenDto issueToken(Long userId) {
-        LocalDateTime now = LocalDateTime.now();
 
         int activeCount = waitingTokenRepository.countByTokenStatus(ACTIVE);
-        WaitingToken issuedWaitingToken = WaitingToken.issue(now, userId, activeCount, fixActiveCount, expirationMinutes);
-        String jwtToken = tokenProvider.issueToken(userId, now, expirationMinutes);
+        WaitingToken issuedWaitingToken = WaitingToken.issue(userId, activeCount, FIX_ACTIVE_COUNT, EXPIRATION_MINUTES);
         WaitingToken savedWaitingToken = waitingTokenRepository.save(issuedWaitingToken);
 
-        return new WaitingTokenIssueTokenDto(savedWaitingToken.getId(), savedWaitingToken.getUserId(), savedWaitingToken.getTokenStatus(),
-                savedWaitingToken.getCreatedAt(), savedWaitingToken.getExpiredAt(), jwtToken);
+        String jwtToken = tokenProvider.issueToken(userId,issuedWaitingToken.getCreatedAt(), EXPIRATION_MINUTES);
+
+        return WaitingTokenIssueTokenDto.from(savedWaitingToken, jwtToken);
     }
 
-    public WaitingOrderDto getWaitingOrder(String jwtToken){
-        return tokenValidator.verify(jwtToken);
+    public WaitingOrderDto verifyAndGetWaitingOrder(String jwtToken){
+        String token = jwtToken.substring(7);
+        Long userId = tokenValidator.validateTokenAndGetUserId(token);
+        return calculateWaitingOrder(userId);
+    }
+    private WaitingOrderDto calculateWaitingOrder(Long userId) {
+        WaitingToken waitingToken = getWaitingTokenByUserId(userId);
+
+        if (waitingToken.getTokenStatus().equals(ACTIVE)) {
+            return WaitingOrderDto.active();
+        }else if (waitingToken.getTokenStatus().equals(EXPIRED)) {
+            return WaitingOrderDto.invalid();
+        }
+
+        long lastActiveTokenNum = waitingTokenRepository.findLastActiveTokenBy(userId);
+        long waitingOrder = waitingToken.getId() - lastActiveTokenNum;
+        return WaitingOrderDto.waiting(waitingOrder);
+    }
+
+    private WaitingToken getWaitingTokenByUserId(Long userId) {
+        return waitingTokenRepository.findByUserId(userId)
+                .orElseThrow(() -> new BusinessException("토큰이 존재하지 않습니다."));
     }
 }
