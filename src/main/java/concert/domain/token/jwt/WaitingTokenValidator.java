@@ -21,30 +21,6 @@ public class WaitingTokenValidator {
 
     private final WaitingTokenRepository waitingTokenRepository;
 
-//    public WaitingOrderDto verify(String jwt) {
-//        DecodedJWT decodedJWT = null;
-//        try {
-//            decodedJWT = JWT.require(Algorithm.HMAC512("concert"))
-//                    .build()
-//                    .verify(jwt);
-//        } catch (JWTDecodeException | TokenExpiredException | NullPointerException e) {
-//            return new WaitingOrderDto(-1, false);
-//        }
-//        Long userId = getUserIdFromToken(decodedJWT);
-//        WaitingToken waitingToken = waitingTokenRepository.findByUserId(userId).get();
-//
-//        if (waitingToken.getTokenStatus().equals(TokenStatus.ACTIVE)) {
-//            return new WaitingOrderDto(0, true);
-//        }
-//
-//        long lastActiveTokenNum = waitingTokenRepository.findLastActiveTokenBy(userId);
-//
-//        log.info(String.valueOf(lastActiveTokenNum));
-//
-//        long waitingOrder = waitingToken.getId() - lastActiveTokenNum;
-//        return new WaitingOrderDto(waitingOrder, false);
-//    }
-
     public Long validateTokenAndGetUserId(String jwt) {
         DecodedJWT decodedJWT = null;
         try {

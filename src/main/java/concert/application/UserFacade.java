@@ -1,5 +1,6 @@
 package concert.application;
 
+import concert.domain.token.WaitingTokenService;
 import concert.domain.token.jwt.WaitingTokenValidator;
 import concert.domain.user.AmountChargeDto;
 import concert.domain.user.AmountGetDto;
@@ -12,15 +13,15 @@ import org.springframework.stereotype.Component;
 public class UserFacade {
 
     private final UserService userService;
-    private final WaitingTokenValidator waitingTokenValidator;
+    private final WaitingTokenService waitingTokenService;
 
     public AmountChargeDto chargeAmount(Long userId, int amount, String jwtToken) {
-        waitingTokenValidator.isTokenActive(jwtToken);
+        waitingTokenService.verifyAndGetWaitingOrder(jwtToken);
         return userService.chargeAmount(userId, amount);
     }
 
     public AmountGetDto getAmount(Long userId,String jwtToken) {
-        waitingTokenValidator.isTokenActive(jwtToken);
+        waitingTokenService.verifyAndGetWaitingOrder(jwtToken);
         return userService.getAmount(userId);
     }
 }

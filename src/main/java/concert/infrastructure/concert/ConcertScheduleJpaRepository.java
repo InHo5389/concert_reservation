@@ -1,5 +1,6 @@
 package concert.infrastructure.concert;
 
+import concert.domain.concert.Concert;
 import concert.domain.concert.ConcertSchedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,4 +12,5 @@ public interface ConcertScheduleJpaRepository extends JpaRepository<ConcertSched
     List<ConcertSchedule> findAll();
     ConcertSchedule save(ConcertSchedule concertSchedule);
     ConcertSchedule findByConcertIdAndConcertDateTime(Long concertId, LocalDateTime concertDate);
+    List<ConcertSchedule> findByConcert(Concert concert);
 }

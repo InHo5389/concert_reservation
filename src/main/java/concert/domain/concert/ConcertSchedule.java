@@ -25,7 +25,7 @@ public class ConcertSchedule {
     private Long concertId;
     private LocalDateTime concertDateTime;
 
-    public boolean availableConcert(LocalDateTime now){
+    public boolean isAvailableConcert(LocalDateTime now){
         return concertDateTime.isAfter(now);
     }
 }
