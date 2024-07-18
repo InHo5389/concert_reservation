@@ -9,7 +9,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Getter
 @Entity
 @Builder
@@ -28,11 +30,13 @@ public class User {
     private int amount;
 
     public int chargeAmount(long amount) {
+        log.info("chargeAmount(): username={},amount={}",this.username,amount);
         return this.amount += amount;
     }
 
     public void validateAndDecreaseAmount(long amount){
         if(!availablePay(amount)){
+            log.warn("Not Enough Amount id={}, username={}",this.id,this.username);
             throw new BusinessException("잔액이 부족합니다.");
         }
         this.amount -= amount;

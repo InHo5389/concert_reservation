@@ -5,9 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Getter
 @Entity
 @Builder
@@ -28,6 +30,8 @@ public class Payment {
     private LocalDateTime modifiedAt;
 
     public static Payment createPayment(long reservationId, int amount){
+        log.info("Payment create");
+
         LocalDateTime now = LocalDateTime.now();
         return Payment.builder()
                 .reservationId(reservationId)

@@ -51,8 +51,8 @@ public class TokenExpirationScheduler {
         int activeTokenCount = waitingTokenRepository.countByTokenStatus(TokenStatus.ACTIVE);
         log.info("Current active token count: {}", activeTokenCount);
 
-        if (activeTokenCount < 3) {
-            int tokensToActivate = 3 - activeTokenCount;
+        if (activeTokenCount < 50) {
+            int tokensToActivate = 50 - activeTokenCount;
             PageRequest pageRequest = PageRequest.of(0, tokensToActivate);
             List<WaitingToken> waitingTokens = waitingTokenRepository.findByTokenStatusOrderByCreatedAt(TokenStatus.WAIT, pageRequest);
 
@@ -77,6 +77,7 @@ public class TokenExpirationScheduler {
 
         for (Reservation reservation : expiredReservations) {
             reservationRepository.delete(reservation);
+            log.info("Deleted token: {}",reservation.getId());
         }
     }
 }

@@ -11,10 +11,12 @@ import concert.domain.token.jwt.WaitingTokenValidator;
 import concert.domain.user.User;
 import concert.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ReservationFacade {
@@ -24,12 +26,15 @@ public class ReservationFacade {
     private final UserService userService;
 
     public ReservationDto reserveSeat(LocalDateTime concertDate, Long seatId) {
+        log.info("ReservationFacade reserveSeat(): concertDate={}, seatId={}", concertDate, seatId);
+
         Reservation reservation = reservationService.reserveSeat(concertDate, seatId);
         Seat seat = concertService.getSeat(seatId);
         return new ReservationDto(reservation, seat);
     }
 
     public PaymentDto pay(Long reservationId, Long userId, int amount) {
+        log.info("ReservationFacade pay(): reservationId={}, userId={}, amount={}", reservationId, userId, amount);
         Reservation reservation = reservationService.completeReservation(reservationId);
         userService.processPayment(userId, amount);
         Payment payment = reservationService.createPayment(reservationId, amount);

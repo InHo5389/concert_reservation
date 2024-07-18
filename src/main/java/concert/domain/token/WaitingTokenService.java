@@ -6,24 +6,25 @@ import concert.domain.token.dto.WaitingTokenIssueTokenDto;
 import concert.domain.token.jwt.WaitingTokenProvider;
 import concert.domain.token.jwt.WaitingTokenValidator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import static concert.domain.token.TokenStatus.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class WaitingTokenService {
 
     private final WaitingTokenRepository waitingTokenRepository;
     private final WaitingTokenProvider tokenProvider;
-    private final WaitingTokenValidator tokenValidator;
 
     private static final int EXPIRATION_MINUTES = 5;
-    private static final int FIX_ACTIVE_COUNT = 2;
+    private static final int FIX_ACTIVE_COUNT = 30;
 
 
     public WaitingTokenIssueTokenDto issueToken(Long userId) {
-
+        log.info("WaitingTokenService issueToken(): userId={}",userId);
         int activeCount = waitingTokenRepository.countByTokenStatus(ACTIVE);
         WaitingToken issuedWaitingToken = WaitingToken.issue(userId, activeCount, FIX_ACTIVE_COUNT, EXPIRATION_MINUTES);
         WaitingToken savedWaitingToken = waitingTokenRepository.save(issuedWaitingToken);
@@ -34,20 +35,18 @@ public class WaitingTokenService {
     }
 
     public WaitingOrderDto verifyAndGetWaitingOrder(Long userId){
+        log.info("WaitingTokenService verifyAndGetWaitingOrder(): userId={}",userId);
         return calculateWaitingOrder(userId);
     }
-//    public WaitingOrderDto verifyAndGetWaitingOrder(String jwtToken){
-//        String token = jwtToken.substring(7);
-//        Long userId = tokenValidator.validateTokenAndGetUserId(token);
-//        return calculateWaitingOrder(userId);
-//    }
 
     private WaitingOrderDto calculateWaitingOrder(Long userId) {
         WaitingToken waitingToken = getWaitingTokenByUserId(userId);
 
         if (waitingToken.getTokenStatus().equals(ACTIVE)) {
+            log.info("WaitingToken Acive");
             return WaitingOrderDto.active();
         }else if (waitingToken.getTokenStatus().equals(EXPIRED)) {
+            log.info("WaitingToken Invalid");
             return WaitingOrderDto.invalid();
         }
 
