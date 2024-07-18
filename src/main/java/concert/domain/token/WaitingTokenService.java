@@ -33,11 +33,15 @@ public class WaitingTokenService {
         return WaitingTokenIssueTokenDto.from(savedWaitingToken, jwtToken);
     }
 
-    public WaitingOrderDto verifyAndGetWaitingOrder(String jwtToken){
-        String token = jwtToken.substring(7);
-        Long userId = tokenValidator.validateTokenAndGetUserId(token);
+    public WaitingOrderDto verifyAndGetWaitingOrder(Long userId){
         return calculateWaitingOrder(userId);
     }
+//    public WaitingOrderDto verifyAndGetWaitingOrder(String jwtToken){
+//        String token = jwtToken.substring(7);
+//        Long userId = tokenValidator.validateTokenAndGetUserId(token);
+//        return calculateWaitingOrder(userId);
+//    }
+
     private WaitingOrderDto calculateWaitingOrder(Long userId) {
         WaitingToken waitingToken = getWaitingTokenByUserId(userId);
 

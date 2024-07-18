@@ -13,5 +13,5 @@ public interface ConcertScheduleJpaRepository extends JpaRepository<ConcertSched
     List<ConcertSchedule> findAll();
     ConcertSchedule save(ConcertSchedule concertSchedule);
     Optional<ConcertSchedule> findByConcertIdAndConcertDateTime(Long concertId, LocalDateTime concertDate);
-    List<ConcertSchedule> findByConcert(Concert concert);
+    List<ConcertSchedule> findByConcertId(Long concertId);
 }

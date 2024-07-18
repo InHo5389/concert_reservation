@@ -16,15 +16,12 @@ import java.util.List;
 public class ConcertFacade {
 
     private final ConcertService concertService;
-    private final WaitingTokenService waitingTokenService;
 
-    public List<ConcertSchedule> availableDates(Long concertId,String jwtToken){
-        waitingTokenService.verifyAndGetWaitingOrder(jwtToken);
+    public List<ConcertSchedule> availableDates(Long concertId){
         return concertService.availableDates(concertId);
     }
 
-    public List<Seat> availableSeats(Long concertId, LocalDateTime concertDate, String jwtToken){
-        waitingTokenService.verifyAndGetWaitingOrder(jwtToken);
+    public List<Seat> availableSeats(Long concertId, LocalDateTime concertDate){
         return concertService.availableSeats(concertId,concertDate);
     }
 }

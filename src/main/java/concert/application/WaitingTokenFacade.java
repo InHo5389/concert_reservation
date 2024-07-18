@@ -22,7 +22,7 @@ public class WaitingTokenFacade {
     }
 
     @Transactional(readOnly = true)
-    public WaitingOrderDto getWaitingOrder(String jwtToken){
-        return waitingTokenService.verifyAndGetWaitingOrder(jwtToken);
+    public WaitingOrderDto getWaitingOrder(Long userId){
+        return waitingTokenService.verifyAndGetWaitingOrder(userId);
     }
 }

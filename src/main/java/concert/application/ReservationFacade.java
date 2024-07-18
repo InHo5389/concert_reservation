@@ -20,19 +20,16 @@ import java.time.LocalDateTime;
 public class ReservationFacade {
 
     private final ReservationService reservationService;
-    private final WaitingTokenValidator waitingTokenValidator;
     private final ConcertService concertService;
     private final UserService userService;
 
-    public ReservationDto reserveSeat(LocalDateTime concertDate, Long seatId, String jwtToken) {
-        waitingTokenValidator.isTokenActive(jwtToken);
+    public ReservationDto reserveSeat(LocalDateTime concertDate, Long seatId) {
         Reservation reservation = reservationService.reserveSeat(concertDate, seatId);
         Seat seat = concertService.getSeat(seatId);
         return new ReservationDto(reservation, seat);
     }
 
-    public PaymentDto pay(Long reservationId, Long userId, int amount, String jwtToken) {
-        waitingTokenValidator.isTokenActive(jwtToken);
+    public PaymentDto pay(Long reservationId, Long userId, int amount) {
         Reservation reservation = reservationService.completeReservation(reservationId);
         userService.processPayment(userId, amount);
         Payment payment = reservationService.createPayment(reservationId, amount);

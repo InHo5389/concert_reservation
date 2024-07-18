@@ -14,7 +14,7 @@ public interface ConcertRepository {
     List<ConcertSchedule> findAll();
     ConcertSchedule save(ConcertSchedule concertSchedule);
     Optional<ConcertSchedule> findByConcertIdAndConcertDateTime(Long concertId, LocalDateTime concertDate);
-    List<ConcertSchedule> findByConcert(Concert concert);
+    List<ConcertSchedule> findByConcert(Long concertId);
 
     // seat
     List<Seat> findByConcertScheduleIdAndSeatStatus(Long concertScheduleId,SeatStatus seatStatus);

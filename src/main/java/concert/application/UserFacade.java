@@ -13,15 +13,12 @@ import org.springframework.stereotype.Component;
 public class UserFacade {
 
     private final UserService userService;
-    private final WaitingTokenService waitingTokenService;
 
-    public AmountChargeDto chargeAmount(Long userId, int amount, String jwtToken) {
-        waitingTokenService.verifyAndGetWaitingOrder(jwtToken);
+    public AmountChargeDto chargeAmount(Long userId, int amount) {
         return userService.chargeAmount(userId, amount);
     }
 
-    public AmountGetDto getAmount(Long userId,String jwtToken) {
-        waitingTokenService.verifyAndGetWaitingOrder(jwtToken);
+    public AmountGetDto getAmount(Long userId) {
         return userService.getAmount(userId);
     }
 }

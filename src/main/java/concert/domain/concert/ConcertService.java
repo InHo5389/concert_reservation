@@ -19,7 +19,7 @@ public class ConcertService {
         Concert concert = getConcert(concertId);
 
         LocalDateTime now = LocalDateTime.now();
-        return concertRepository.findByConcert(concert).stream()
+        return concertRepository.findByConcert(concert.getId()).stream()
                 .filter(schedule -> schedule.isAvailableConcert(now))
                 .collect(Collectors.toList());
     }
