@@ -1,13 +1,6 @@
 package concert.domain.reservation;
 
 import concert.common.exception.BusinessException;
-import concert.domain.concert.ConcertRepository;
-import concert.domain.concert.Seat;
-import concert.domain.user.AmountHistory;
-import concert.domain.user.AmountStatus;
-import concert.domain.user.User;
-import concert.domain.user.UserRepository;
-import concert.infrastructure.reservation.PaymentJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -20,10 +13,21 @@ import java.time.LocalDateTime;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
-    private final UserRepository userRepository;
-    private final ConcertRepository concertRepository;
 
     private static final int FIXED_EXPIRED_MINUTES = 5;
+
+    @Transactional
+    public Reservation completeReservation(Long reservationId) {
+        Reservation reservation = getReservation(reservationId);
+
+        reservation.validateAndComplete();
+        return reservationRepository.save(reservation);
+    }
+
+    public Reservation getReservation(Long reservationId) {
+        return reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new BusinessException("예약된 좌석이 없습니다."));
+    }
 
     @Transactional
     public Reservation reserveSeat(LocalDateTime concertDate, Long seatId) {
@@ -51,53 +55,14 @@ public class ReservationService {
     }
 
     @Transactional
-    public PaymentDto pay(Long reservationId, Long userId, int amount) {
-        // 1. 결제 처리 로직
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException("회원을 찾을수 없습니다."));
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new BusinessException("예약된 좌석이 없습니다."));
-        Seat seat = concertRepository.findBySeatId(reservation.getSeatId())
-                .orElseThrow(() -> new BusinessException("좌석이 존재하지 않습니다."));
-        int price = reservation.getReservationAmount();
-        int userAmount = user.getAmount();
-        LocalDateTime now = LocalDateTime.now();
-        userAmount -= price;
-        if (reservation.getStatus() != ReservationStatus.RESERVED) {
-            throw new BusinessException("유효하지 않은 예약입니다.");
-        }
-
-        if (now.isAfter(reservation.getExpirationTime())) {
-            throw new BusinessException("예약 시간이 만료되었습니다.");
-        }
-
-        if (!user.availablePay(amount)) {
-            throw new BusinessException("잔액이 부족합니다.");
-        }
-        user.decreaseAmount(amount);
-
-        reservation.setStatus(ReservationStatus.PAID);
-        AmountHistory amountHistory = userRepository.save(AmountHistory.builder()
-                .userId(userId)
-                .useAmount(price)
-                .remainAmount(userAmount)
-                .status(AmountStatus.USE)
-                .build());
-        userRepository.save(amountHistory);
-
-        reservationRepository.save(Payment.builder()
-                        .reservationId(reservationId)
-                        .paymentAmount(price)
-                        .status(PaymentStatus.COMPLETED)
-                        .createdAt(now)
-                        .modifiedAt(now)
-                .build());
-        return PaymentDto.builder()
-                .username(user.getUsername())
-                .useAmount(price)
-                .seatNumber(seat.getSeatNumber())
-                .seatPrice(seat.getSeatPrice())
-                .createAt(now)
+    public Payment createPayment(Reservation reservation, int amount) {
+        Payment payment = Payment.builder()
+                .reservationId(reservation.getId())
+                .paymentAmount(amount)
+                .status(PaymentStatus.COMPLETED)
+                .createdAt(LocalDateTime.now())
+                .modifiedAt(LocalDateTime.now())
                 .build();
+        return reservationRepository.save(payment);
     }
 }

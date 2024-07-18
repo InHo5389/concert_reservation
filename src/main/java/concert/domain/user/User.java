@@ -1,5 +1,6 @@
 package concert.domain.user;
 
+import concert.common.exception.BusinessException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,18 +27,17 @@ public class User {
     private String phone;
     private int amount;
 
-    public int getAmount() {
-        return this.amount;
-    }
-
     public int chargeAmount(long amount) {
         return this.amount += amount;
     }
 
-    public int decreaseAmount(long amount){
-        return this.amount -= amount;
+    public void validateAndDecreaseAmount(long amount){
+        if(!availablePay(amount)){
+            throw new BusinessException("잔액이 부족합니다.");
+        }
+        this.amount -= amount;
     }
     public boolean availablePay(long amount){
-        return this.amount > amount;
+        return this.amount >= amount;
     }
 }

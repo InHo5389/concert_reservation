@@ -33,7 +33,8 @@ public class ConcertService {
         return concertRepository.findByConcertScheduleIdAndSeatStatus(concertSchedule.getConcertId(), SeatStatus.AVAILABLE);
     }
 
-    public Optional<Seat> getSeat(Long seatId){
-        return concertRepository.findBySeatId(seatId);
+    public Seat getSeat(Long seatId) {
+        return concertRepository.findBySeatId(seatId)
+                .orElseThrow(() -> new BusinessException("좌석이 존재하지 않습니다."));
     }
 }
