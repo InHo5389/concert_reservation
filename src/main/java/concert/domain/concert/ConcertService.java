@@ -15,22 +15,26 @@ public class ConcertService {
 
     private final ConcertRepository concertRepository;
 
-    public List<ConcertSchedule> availableDates(Long concertId){
-        Concert concert = concertRepository.findById(concertId)
-                .orElseThrow(() -> new BusinessException("해당 콘서트가 없습니다."));
+    public List<ConcertSchedule> availableDates(Long concertId) {
+        Concert concert = getConcert(concertId);
 
         LocalDateTime now = LocalDateTime.now();
         return concertRepository.findByConcert(concert).stream()
-                .filter(schedule->schedule.isAvailableConcert(now))
+                .filter(schedule -> schedule.isAvailableConcert(now))
                 .collect(Collectors.toList());
     }
 
-    public List<Seat> availableSeats(Long concertId, LocalDateTime concertDate){
-        concertRepository.findById(concertId)
-                .orElseThrow(() -> new BusinessException("해당 콘서트가 없습니다."));
+    public List<Seat> availableSeats(Long concertId, LocalDateTime concertDate) {
+        Concert concert = getConcert(concertId);
 
-        ConcertSchedule concertSchedule = concertRepository.findByConcertIdAndConcertDateTime(concertId, concertDate);
+        ConcertSchedule concertSchedule = concertRepository.findByConcertIdAndConcertDateTime(concert.getId(), concertDate)
+                .orElseThrow(()->new BusinessException("해당 날짜에 해당하는 콘서트가 없습니다."));
         return concertRepository.findByConcertScheduleIdAndSeatStatus(concertSchedule.getConcertId(), SeatStatus.AVAILABLE);
+    }
+
+    public Concert getConcert(Long concertId) {
+        return concertRepository.findById(concertId)
+                .orElseThrow(() -> new BusinessException("해당 콘서트가 없습니다."));
     }
 
     public Seat getSeat(Long seatId) {

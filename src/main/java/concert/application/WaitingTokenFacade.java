@@ -17,7 +17,7 @@ public class WaitingTokenFacade {
 
     @Transactional
     public WaitingTokenIssueTokenDto issueToken(Long userId){
-        userService.findUser(userId);
+        userService.getUser(userId);
         return waitingTokenService.issueToken(userId);
     }
 

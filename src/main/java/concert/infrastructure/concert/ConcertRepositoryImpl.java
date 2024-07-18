@@ -37,7 +37,7 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     }
 
     @Override
-    public ConcertSchedule findByConcertIdAndConcertDateTime(Long concertId, LocalDateTime concertDate) {
+    public Optional<ConcertSchedule> findByConcertIdAndConcertDateTime(Long concertId, LocalDateTime concertDate) {
         return concertScheduleJpaRepository.findByConcertIdAndConcertDateTime(concertId,concertDate);
     }
 

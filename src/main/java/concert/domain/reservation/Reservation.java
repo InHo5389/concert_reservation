@@ -32,6 +32,18 @@ public class Reservation {
     private LocalDateTime modifiedAt;
     private LocalDateTime expirationTime;
 
+    public static Reservation createReservation(Long seatId,LocalDateTime concertDate,int expireMinutes){
+        LocalDateTime now = LocalDateTime.now();
+        return Reservation.builder()
+                .seatId(seatId)
+                .concertDate(concertDate)
+                .status(ReservationStatus.RESERVED)
+                .createdAt(now)
+                .modifiedAt(now)
+                .expirationTime(now.plusMinutes(expireMinutes))
+                .build();
+    }
+
     public void validateAndComplete() {
         if (this.status != ReservationStatus.RESERVED) {
             throw new BusinessException("유효하지 않은 예약입니다.");

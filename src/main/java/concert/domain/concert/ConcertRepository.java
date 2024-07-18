@@ -13,7 +13,7 @@ public interface ConcertRepository {
     // concert schedule
     List<ConcertSchedule> findAll();
     ConcertSchedule save(ConcertSchedule concertSchedule);
-    ConcertSchedule findByConcertIdAndConcertDateTime(Long concertId, LocalDateTime concertDate);
+    Optional<ConcertSchedule> findByConcertIdAndConcertDateTime(Long concertId, LocalDateTime concertDate);
     List<ConcertSchedule> findByConcert(Concert concert);
 
     // seat

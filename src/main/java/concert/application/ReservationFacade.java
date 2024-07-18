@@ -35,7 +35,7 @@ public class ReservationFacade {
         waitingTokenValidator.isTokenActive(jwtToken);
         Reservation reservation = reservationService.completeReservation(reservationId);
         userService.processPayment(userId, amount);
-        Payment payment = reservationService.createPayment(reservation, amount);
+        Payment payment = reservationService.createPayment(reservationId, amount);
 
         Seat seat = concertService.getSeat(reservation.getSeatId());
         User user = userService.getUser(userId);

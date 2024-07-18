@@ -37,15 +37,7 @@ public class ReservationService {
             throw new BusinessException("좌석이 이미 예약되었습니다.");
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        Reservation reservation = Reservation.builder()
-                .seatId(seatId)
-                .concertDate(concertDate)
-                .status(ReservationStatus.RESERVED)
-                .createdAt(now)
-                .modifiedAt(now)
-                .expirationTime(now.plusMinutes(FIXED_EXPIRED_MINUTES))
-                .build();
+        Reservation reservation = Reservation.createReservation(seatId,concertDate,FIXED_EXPIRED_MINUTES);
 
         try {
             return reservationRepository.save(reservation);
@@ -55,14 +47,8 @@ public class ReservationService {
     }
 
     @Transactional
-    public Payment createPayment(Reservation reservation, int amount) {
-        Payment payment = Payment.builder()
-                .reservationId(reservation.getId())
-                .paymentAmount(amount)
-                .status(PaymentStatus.COMPLETED)
-                .createdAt(LocalDateTime.now())
-                .modifiedAt(LocalDateTime.now())
-                .build();
+    public Payment createPayment(long reservationId, int amount) {
+        Payment payment = Payment.createPayment(reservationId,amount);
         return reservationRepository.save(payment);
     }
 }

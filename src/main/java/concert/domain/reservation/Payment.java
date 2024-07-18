@@ -26,4 +26,15 @@ public class Payment {
     private PaymentStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+
+    public static Payment createPayment(long reservationId, int amount){
+        LocalDateTime now = LocalDateTime.now();
+        return Payment.builder()
+                .reservationId(reservationId)
+                .paymentAmount(amount)
+                .status(PaymentStatus.COMPLETED)
+                .createdAt(now)
+                .modifiedAt(now)
+                .build();
+    }
 }
