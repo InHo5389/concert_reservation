@@ -1,10 +1,7 @@
 package concert.domain.user;
 
 import concert.common.exception.BusinessException;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Entity
 @Builder
+@Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {

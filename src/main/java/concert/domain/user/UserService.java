@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class UserService {
 
@@ -34,6 +33,7 @@ public class UserService {
         return new AmountGetDto(user.getUsername(), user.getAmount());
     }
 
+    @Transactional
     public AmountChargeDto chargeAmount(Long userId, int amount) {
         log.info("UserService chargeAmount(): userId={}, amount={}",userId,amount);
         User user = getUser(userId);

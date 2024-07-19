@@ -16,6 +16,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,7 +48,6 @@ class ConcertFacadeTest {
     @Autowired
     private ConcertRepository concertRepository;
 
-
     @Test
     @DisplayName("토큰이 Active상태일때 콘서트 스케줄을 조회할 수 있다..")
     void getConcertSchedule(){
@@ -54,30 +55,30 @@ class ConcertFacadeTest {
         LocalDateTime now = LocalDateTime.now();
         userRepository.save(new User(1L,"12@naver.com","1234","인호","01012345678",500));
 
-        concertRepository.save(new Concert(1L,"임영웅 콘서트" , "임영웅"));
+        long concertId = 50L;
+        concertRepository.save(new Concert(concertId,"임영웅","임영웅"));
 
-        concertRepository.save(new ConcertSchedule(1L,1L, LocalDateTime.now().minusDays(1)));
+        concertRepository.save(new ConcertSchedule(1L,concertId, LocalDateTime.now().minusDays(1)));
 
-        concertRepository.save(new ConcertSchedule(2L,1L, LocalDateTime.now().plusDays(1)));
-        concertRepository.save(new ConcertSchedule(3L,1L, LocalDateTime.now().plusDays(1)));
+        concertRepository.save(new ConcertSchedule(2L,concertId, LocalDateTime.now().plusDays(1)));
+        concertRepository.save(new ConcertSchedule(3L,concertId, LocalDateTime.now().plusDays(1)));
 
         String token = waitingTokenProvider.issueToken(1L, now, 5);
         waitingTokenRepository.save(new WaitingToken(1L,1L, TokenStatus.ACTIVE,now,now.plusMinutes(5)));
         //when
-        List<ConcertSchedule> concertSchedules = concertFacade.availableDates(1L, token);
+        List<ConcertSchedule> concertSchedules = concertFacade.availableDates(concertId);
         //then
         assertThat(concertSchedules).hasSize(2);
     }
 
     @Test
-    @DisplayName("토큰이 WAIT 상태일때 콘서트 스케줄을 조회하면 예외가 발생한다.")
+    @DisplayName("현재 일시에 콘서트 스케줄을 조회할때 스케줄이 지나지 않은 콘서트 스케줄만 조회된다.")
     void getConcertSchedule_FAIL(){
         //given
         LocalDateTime now = LocalDateTime.now();
         userRepository.save(new User(1L,"12@naver.com","1234","인호","01012345678",500));
 
         concertRepository.save(new Concert(1L,"임영웅 콘서트" , "임영웅"));
-
         concertRepository.save(new ConcertSchedule(1L,1L, LocalDateTime.now().minusDays(1)));
 
         concertRepository.save(new ConcertSchedule(2L,1L, LocalDateTime.now().plusDays(1)));
@@ -86,9 +87,8 @@ class ConcertFacadeTest {
         String token = waitingTokenProvider.issueToken(1L, now, 5);
         waitingTokenRepository.save(new WaitingToken(1L,1L, TokenStatus.WAIT,now,now.plusMinutes(5)));
         //when
+        List<ConcertSchedule> concertSchedules = concertFacade.availableDates(1L);
         //then
-        assertThatThrownBy(()->concertFacade.availableDates(1L, token))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage("대기열 대기중입니다. 잠시만 기다려주세요.");
+        assertThat(concertSchedules.size()).isEqualTo(2);
     }
 }

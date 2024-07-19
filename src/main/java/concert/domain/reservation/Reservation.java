@@ -27,7 +27,6 @@ public class Reservation {
     private LocalDateTime concertDate;
     private int reservationAmount;
 
-    @Setter
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
     private LocalDateTime createdAt;

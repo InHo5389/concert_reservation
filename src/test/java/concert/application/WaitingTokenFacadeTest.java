@@ -14,6 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@ActiveProfiles("test")
 @Transactional
 @SpringBootTest
 class WaitingTokenFacadeTest {
@@ -65,14 +67,14 @@ class WaitingTokenFacadeTest {
         //given
         LocalDateTime now = LocalDateTime.now();
         WaitingTokenProvider tokenProvider = new WaitingTokenProvider();
-        String token = tokenProvider.issueToken(4L, now, 5);
+        long userId = 4L;
 
         waitingTokenRepository.save(new WaitingToken(1L, 1L, TokenStatus.ACTIVE, now, now.plusMinutes(5)));
         waitingTokenRepository.save(new WaitingToken(2L, 2L, TokenStatus.ACTIVE, now.plusMinutes(1), now.plusMinutes(5)));
         waitingTokenRepository.save(new WaitingToken(3L, 3L, TokenStatus.ACTIVE, now.plusMinutes(2), now.plusMinutes(5)));
-        waitingTokenRepository.save(new WaitingToken(4L, 4L, TokenStatus.WAIT, now.plusMinutes(3), now.plusMinutes(5)));
+        waitingTokenRepository.save(new WaitingToken(userId, userId, TokenStatus.WAIT, now.plusMinutes(3), now.plusMinutes(5)));
         //when
-        WaitingOrderDto waitingOrder = waitingTokenFacade.getWaitingOrder(token.substring(7));
+        WaitingOrderDto waitingOrder = waitingTokenFacade.getWaitingOrder(userId);
         //then
         Assertions.assertThat(waitingOrder).extracting("waitingOrder", "authority")
                 .contains(1L, false);
@@ -84,11 +86,11 @@ class WaitingTokenFacadeTest {
         //given
         LocalDateTime now = LocalDateTime.now();
         WaitingTokenProvider tokenProvider = new WaitingTokenProvider();
-        String token = tokenProvider.issueToken(1L, now, 5);
 
-        waitingTokenRepository.save(new WaitingToken(1L, 1L, TokenStatus.ACTIVE, now, now.plusMinutes(5)));
+        long userId = 1L;
+        waitingTokenRepository.save(new WaitingToken(1L, userId, TokenStatus.ACTIVE, now, now.plusMinutes(5)));
         //when
-        WaitingOrderDto waitingOrder = waitingTokenFacade.getWaitingOrder(token.substring(7));
+        WaitingOrderDto waitingOrder = waitingTokenFacade.getWaitingOrder(userId);
         //then
         Assertions.assertThat(waitingOrder).extracting("waitingOrder", "authority")
                 .contains(0L, true);

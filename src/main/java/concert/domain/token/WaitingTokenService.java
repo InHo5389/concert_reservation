@@ -4,7 +4,6 @@ import concert.common.exception.BusinessException;
 import concert.domain.token.dto.WaitingOrderDto;
 import concert.domain.token.dto.WaitingTokenIssueTokenDto;
 import concert.domain.token.jwt.WaitingTokenProvider;
-import concert.domain.token.jwt.WaitingTokenValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,7 +33,7 @@ public class WaitingTokenService {
         return WaitingTokenIssueTokenDto.from(savedWaitingToken, jwtToken);
     }
 
-    public WaitingOrderDto verifyAndGetWaitingOrder(Long userId){
+    public WaitingOrderDto getWaitingOrder(Long userId){
         log.info("WaitingTokenService verifyAndGetWaitingOrder(): userId={}",userId);
         return calculateWaitingOrder(userId);
     }

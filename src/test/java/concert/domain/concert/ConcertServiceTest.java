@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
+@Transactional
 @ExtendWith(MockitoExtension.class)
 class ConcertServiceTest {
 
@@ -37,7 +39,7 @@ class ConcertServiceTest {
                 .willReturn(Optional.of(new Concert(concertId,"임영웅 콘서트","임영웅")));
         ConcertSchedule schedule = new ConcertSchedule(1L, concertId, now);
         given(concertRepository.findByConcertIdAndConcertDateTime(concertId, now))
-                .willReturn(schedule);
+                .willReturn(Optional.of(schedule));
 
         Seat seat1 = new Seat(1L, 1L, 1, SeatStatus.AVAILABLE,2000);
         Seat seat2 = new Seat(1L, 1L, 2, SeatStatus.AVAILABLE,2000);

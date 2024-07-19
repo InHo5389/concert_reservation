@@ -27,6 +27,6 @@ public class WaitingTokenFacade {
     @Transactional(readOnly = true)
     public WaitingOrderDto getWaitingOrder(Long userId){
         log.info("WaitingTokenFacade getWaitingOrder(): userId={}",userId);
-        return waitingTokenService.verifyAndGetWaitingOrder(userId);
+        return waitingTokenService.getWaitingOrder(userId);
     }
 }

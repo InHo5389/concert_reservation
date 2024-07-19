@@ -47,7 +47,7 @@ class TokenControllerTest {
         given(waitingTokenFacade.issueToken(userId)).willReturn(mockDto);
         //when
         //then
-        mockMvc.perform(post("/token/{userId}", userId))
+        mockMvc.perform(post("/concerts/tokens/{userId}", userId))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
