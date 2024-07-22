@@ -1,6 +1,5 @@
 package concert.infrastructure.concert;
 
-import concert.domain.concert.Concert;
 import concert.domain.concert.ConcertRepository;
 import concert.domain.concert.Seat;
 import concert.domain.concert.SeatStatus;
@@ -9,11 +8,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 
-
+@Transactional
 @SpringBootTest
 class SeatJpaRepositoryTest {
 

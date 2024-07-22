@@ -6,25 +6,26 @@ import concert.domain.concert.Seat;
 import concert.domain.token.WaitingTokenService;
 import concert.domain.token.jwt.WaitingTokenValidator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ConcertFacade {
 
     private final ConcertService concertService;
-    private final WaitingTokenService waitingTokenService;
 
-    public List<ConcertSchedule> availableDates(Long concertId,String jwtToken){
-        waitingTokenService.verifyAndGetWaitingOrder(jwtToken);
+    public List<ConcertSchedule> availableDates(Long concertId){
+        log.info("ConcertFacade availableDates(): concertId={}",concertId);
         return concertService.availableDates(concertId);
     }
 
-    public List<Seat> availableSeats(Long concertId, LocalDateTime concertDate, String jwtToken){
-        waitingTokenService.verifyAndGetWaitingOrder(jwtToken);
+    public List<Seat> availableSeats(Long concertId, LocalDateTime concertDate){
+        log.info("ConcertFacade availableSeats(): concertId={} ,concertDate={}",concertId,concertDate);
         return concertService.availableSeats(concertId,concertDate);
     }
 }

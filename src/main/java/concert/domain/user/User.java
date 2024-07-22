@@ -1,17 +1,18 @@
 package concert.domain.user;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import concert.common.exception.BusinessException;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Getter
 @Entity
 @Builder
+@Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -26,18 +27,19 @@ public class User {
     private String phone;
     private int amount;
 
-    public int getAmount() {
-        return this.amount;
-    }
-
     public int chargeAmount(long amount) {
+        log.info("chargeAmount(): username={},amount={}",this.username,amount);
         return this.amount += amount;
     }
 
-    public int decreaseAmount(long amount){
-        return this.amount -= amount;
+    public void validateAndDecreaseAmount(long amount){
+        if(!availablePay(amount)){
+            log.warn("Not Enough Amount id={}, username={}",this.id,this.username);
+            throw new BusinessException("잔액이 부족합니다.");
+        }
+        this.amount -= amount;
     }
     public boolean availablePay(long amount){
-        return this.amount > amount;
+        return this.amount >= amount;
     }
 }

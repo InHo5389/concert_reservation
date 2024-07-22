@@ -5,9 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Getter
 @Entity
 @Builder
@@ -27,6 +29,7 @@ public class WaitingToken {
     private LocalDateTime expiredAt;
 
     public static WaitingToken issue(Long userId, int activeTokenCount,int fixActiveCount ,int expirationMinutes) {
+        log.info("WaitingToken issue: userId={}",userId);
         LocalDateTime now = LocalDateTime.now();
         return WaitingToken.builder()
                 .userId(userId)
