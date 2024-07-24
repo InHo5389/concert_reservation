@@ -1,12 +1,10 @@
 package concert.application;
 
+import concert.application.dto.CreateConcertDto;
 import concert.domain.concert.ConcertSchedule;
 import concert.domain.concert.ConcertService;
-import concert.domain.concert.CreateConcertDto;
 
 import concert.domain.concert.Seat;
-import concert.domain.token.WaitingTokenService;
-import concert.domain.token.jwt.WaitingTokenValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

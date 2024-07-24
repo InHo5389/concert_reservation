@@ -6,7 +6,6 @@ import concert.controller.concert.request.AvailableSeatRequest;
 import concert.controller.concert.request.CreateConcertRequest;
 import concert.controller.concert.response.AvailableConcertDateResponse;
 import concert.controller.concert.response.CreateConcertResponse;
-import concert.domain.concert.CreateConcertDto;
 
 import concert.domain.concert.Seat;
 import lombok.RequiredArgsConstructor;

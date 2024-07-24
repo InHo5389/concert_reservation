@@ -1,5 +1,6 @@
 package concert.domain.concert;
 
+import concert.application.dto.CreateConcertDto;
 import concert.common.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,8 +11,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -38,13 +37,6 @@ public class ConcertService {
     }
 
     public List<Seat> availableSeats(Long concertId, LocalDateTime concertDate) {
-
-        log.info("ConcertService availableSeats(): concertId={}, concertDate={}", concertId, concertDate);
-        Concert concert = getConcert(concertId);
-
-        ConcertSchedule concertSchedule = concertRepository.findByConcertIdAndConcertDateTime(concert.getId(), concertDate)
-                .orElseThrow(() -> new BusinessException("해당 날짜에 해당하는 콘서트가 없습니다."));
-
         log.info("ConcertService availableSeats(): concertId={}, concertDate={}",concertId,concertDate);
         Concert concert = getConcert(concertId);
 
@@ -69,7 +61,7 @@ public class ConcertService {
     }
 
     @Transactional
-    public CreateConcertDto createConcert(String name, String title,LocalDateTime concertDateTime ,int baseSeatPrice) {
+    public CreateConcertDto createConcert(String name, String title, LocalDateTime concertDateTime , int baseSeatPrice) {
         Concert concert = concertRepository.save(Concert.create(title, name));
         ConcertSchedule concertSchedule = concertRepository.save(ConcertSchedule.create(concert.getId(),concertDateTime));
 

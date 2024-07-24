@@ -16,6 +16,11 @@ spring:
     hibernate:
       ddl-auto: create
     database-platform: org.hibernate.dialect.MySQL8Dialect
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
 ---
 spring:
   config:
