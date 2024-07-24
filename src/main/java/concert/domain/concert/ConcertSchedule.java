@@ -28,4 +28,12 @@ public class ConcertSchedule {
     public boolean isAvailableConcert(LocalDateTime now){
         return concertDateTime.isAfter(now);
     }
+
+
+    public static ConcertSchedule create(Long concertId,LocalDateTime concertDateTime){
+        return ConcertSchedule.builder()
+                .concertId(concertId)
+                .concertDateTime(concertDateTime)
+                .build();
+    }
 }

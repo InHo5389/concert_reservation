@@ -23,4 +23,11 @@ public class Concert {
     private String title;
     private String name;
 
+
+    public static Concert create(String title,String name){
+        return Concert.builder()
+                .title(title)
+                .name(name)
+                .build();
+    }
 }

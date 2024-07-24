@@ -9,4 +9,6 @@ public interface UserRepository {
     User save(User user);
 
     AmountHistory save(AmountHistory amountHistory);
+    void deleteAllInBatch();
+
 }

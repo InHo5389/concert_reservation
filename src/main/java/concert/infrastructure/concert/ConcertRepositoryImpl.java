@@ -60,4 +60,16 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     public Optional<Seat> findBySeatId(Long seatId) {
         return seatJpaRepository.findById(seatId);
     }
+
+
+    @Override
+    public void deleteAllInBatch() {
+        concertJpaRepository.deleteAllInBatch();
+    }
+
+    @Override
+    public List<Seat> saveAll(List<Seat> seats) {
+        return seatJpaRepository.saveAll(seats);
+    }
+
 }

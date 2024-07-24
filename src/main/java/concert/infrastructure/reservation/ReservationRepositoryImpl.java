@@ -48,4 +48,10 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     public Payment save(Payment payment) {
         return paymentJpaRepository.save(payment);
     }
+
+
+    @Override
+    public void deleteAllInBatch() {
+        reservationJpaRepository.deleteAllInBatch();
+    }
 }

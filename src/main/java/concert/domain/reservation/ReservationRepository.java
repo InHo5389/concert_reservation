@@ -13,4 +13,7 @@ public interface ReservationRepository {
     Optional<Reservation> findById(Long reservationId);
 
     Payment save(Payment payment);
+
+    void deleteAllInBatch();
+
 }
