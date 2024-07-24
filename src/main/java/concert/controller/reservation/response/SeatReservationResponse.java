@@ -14,17 +14,19 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SeatReservationResponse {
+    private String userName;
     private LocalDateTime reservationDate;
+    private LocalDateTime expireDate;
     private int seatNumber;
     private int seatPrice;
-    private SeatStatus seatStatus;
 
     public static SeatReservationResponse of(ReservationDto dto){
         return SeatReservationResponse.builder()
-                .reservationDate(dto.getReservation().getConcertDate())
-                .seatNumber(dto.getSeat().getSeatNumber())
-                .seatStatus(dto.getSeat().getSeatStatus())
-                .seatPrice(dto.getSeat().getSeatPrice())
+                .userName(dto.getUserName())
+                .reservationDate(dto.getReservationDate())
+                .expireDate(dto.getExpireDate())
+                .seatNumber(dto.getSeatNumber())
+                .seatPrice(dto.getSeatPrice())
                 .build();
     }
 }

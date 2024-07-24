@@ -1,6 +1,7 @@
 package concert.domain.reservation;
 
 import concert.common.exception.BusinessException;
+import concert.domain.concert.SeatStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -34,7 +35,7 @@ public class ReservationService {
     }
 
     @Transactional
-    public Reservation reserveSeat(LocalDateTime concertDate, Long seatId) {
+    public Reservation reserveSeat(LocalDateTime concertDate, Long seatId,Long userId,int seatPrice) {
         log.info("ReservationService reserveSeat()");
         Reservation existingReservation = reservationRepository.findByConcertDateAndSeatIdAndStatus(concertDate, seatId, ReservationStatus.RESERVED);
         if (existingReservation != null) {
@@ -42,7 +43,7 @@ public class ReservationService {
             throw new BusinessException("좌석이 이미 예약되었습니다.");
         }
 
-        Reservation reservation = Reservation.createReservation(seatId,concertDate,FIXED_EXPIRED_MINUTES);
+        Reservation reservation = Reservation.createReservation(seatId,concertDate,FIXED_EXPIRED_MINUTES,userId,seatPrice);
 
         try {
             return reservationRepository.save(reservation);

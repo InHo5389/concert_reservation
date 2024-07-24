@@ -28,7 +28,12 @@ public class Seat {
     private SeatStatus seatStatus;
     private int seatPrice;
 
-
+    public void seatStatusReserved(){
+        this.seatStatus = SeatStatus.RESERVED;
+    }
+    public void seatStatusAvailable(){
+        this.seatStatus = SeatStatus.AVAILABLE;
+    }
     public static Seat create(Long concertScheduleId,int seatNumber,int seatPrice){
         return Seat.builder()
                 .concertScheduleId(concertScheduleId)

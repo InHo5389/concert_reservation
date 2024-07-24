@@ -1,5 +1,8 @@
 package concert.domain.shcduler;
 
+import concert.common.exception.BusinessException;
+import concert.domain.concert.ConcertRepository;
+import concert.domain.concert.Seat;
 import concert.domain.reservation.Reservation;
 import concert.domain.reservation.ReservationRepository;
 import concert.domain.reservation.ReservationStatus;
@@ -23,6 +26,7 @@ public class TokenExpirationScheduler {
 
     private final WaitingTokenRepository waitingTokenRepository;
     private final ReservationRepository reservationRepository;
+    private final ConcertRepository concertRepository;
 
     /**
      * 만료된 토큰 상태를 EXPIRED 변경하는 스케줄러
@@ -76,8 +80,11 @@ public class TokenExpirationScheduler {
                 .findByStatusAndExpirationTimeBefore(ReservationStatus.RESERVED, LocalDateTime.now());
 
         for (Reservation reservation : expiredReservations) {
+            Seat seat = concertRepository.findBySeatId(reservation.getSeatId())
+                    .orElseThrow(() -> new BusinessException("해당 좌석이 없습니다."));
+            seat.seatStatusAvailable();
             reservationRepository.delete(reservation);
-            log.info("Deleted token: {}",reservation.getId());
+            log.info("Deleted reservation: {}",reservation.getId());
         }
     }
 }

@@ -1,6 +1,9 @@
 package concert.controller.reservation;
 
 import concert.application.ReservationFacade;
+import concert.common.annotation.AuthUserId;
+import concert.controller.concert.request.ConcertPaymentRequest;
+import concert.controller.concert.request.ConcertReservationRequest;
 import concert.controller.reservation.response.PaymentResponse;
 import concert.controller.reservation.response.SeatReservationResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +18,13 @@ public class ReservationController {
 
     private final ReservationFacade reservationFacade;
 
-    @GetMapping("/reservation")
-    public SeatReservationResponse reservation(LocalDateTime concertDate, Long seatId){
-        return SeatReservationResponse.of(reservationFacade.reserveSeat(concertDate,seatId));
+    @PostMapping("/reservation")
+    public SeatReservationResponse reservation(@RequestBody ConcertReservationRequest request, @AuthUserId Long userId){
+        return SeatReservationResponse.of(reservationFacade.reserveSeat(request.getConcertDate(), request.getSeatId(),userId));
     }
 
     @PostMapping("/payment")
-    public PaymentResponse pay(Long reservationId, Long userId, int amount) {
-        return PaymentResponse.of(reservationFacade.pay(reservationId, userId, amount));
+    public PaymentResponse pay(@RequestBody ConcertPaymentRequest request) {
+        return PaymentResponse.of(reservationFacade.pay(request.getReservationId(), request.getUserId()));
     }
 }

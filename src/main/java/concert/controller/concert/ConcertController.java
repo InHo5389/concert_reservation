@@ -25,8 +25,8 @@ public class ConcertController {
         return concertFacade.availableSeats(request.getConcertId(), request.getConcertDate());
     }
 
-    @GetMapping("/dates")
-    public List<AvailableConcertDateResponse> getAvailableDate(Long concertId) {
+    @GetMapping("/dates/{concertId}")
+    public List<AvailableConcertDateResponse> getAvailableDate(@PathVariable Long concertId) {
         return AvailableConcertDateResponse.of(concertFacade.availableDates(concertId));
     }
 

@@ -60,6 +60,11 @@ public class ConcertService {
                 .orElseThrow(() -> new BusinessException("좌석이 존재하지 않습니다."));
     }
 
+    public ConcertSchedule getConcertSchedule(Long concertScheduleId){
+        return concertRepository.findScheduleById(concertScheduleId)
+                .orElseThrow(() -> new BusinessException("콘서트 스케줄이 존재하지 않습니다."));
+    }
+
     @Transactional
     public CreateConcertDto createConcert(String name, String title, LocalDateTime concertDateTime , int baseSeatPrice) {
         Concert concert = concertRepository.save(Concert.create(title, name));

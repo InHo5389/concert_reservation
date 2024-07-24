@@ -32,6 +32,12 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     }
 
     @Override
+    public Optional<ConcertSchedule> findScheduleById(Long concertScheduleId) {
+        return concertScheduleJpaRepository.findById(concertScheduleId);
+    }
+
+
+    @Override
     public ConcertSchedule save(ConcertSchedule concertSchedule) {
         return concertScheduleJpaRepository.save(concertSchedule);
     }

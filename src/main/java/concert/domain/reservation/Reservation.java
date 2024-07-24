@@ -33,14 +33,16 @@ public class Reservation {
     private LocalDateTime modifiedAt;
     private LocalDateTime expirationTime;
 
-    public static Reservation createReservation(Long seatId,LocalDateTime concertDate,int expireMinutes){
+    public static Reservation createReservation(Long seatId,LocalDateTime concertDate,int expireMinutes,Long userId,int reservationAmount){
         log.info("Reservation create");
 
         LocalDateTime now = LocalDateTime.now();
         return Reservation.builder()
                 .seatId(seatId)
+                .userId(userId)
                 .concertDate(concertDate)
                 .status(ReservationStatus.RESERVED)
+                .reservationAmount(reservationAmount)
                 .createdAt(now)
                 .modifiedAt(now)
                 .expirationTime(now.plusMinutes(expireMinutes))
