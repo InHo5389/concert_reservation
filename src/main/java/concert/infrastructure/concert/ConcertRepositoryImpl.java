@@ -61,6 +61,7 @@ public class ConcertRepositoryImpl implements ConcertRepository {
         return seatJpaRepository.findById(seatId);
     }
 
+
     @Override
     public void deleteAllInBatch() {
         concertJpaRepository.deleteAllInBatch();
@@ -70,4 +71,5 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     public List<Seat> saveAll(List<Seat> seats) {
         return seatJpaRepository.saveAll(seats);
     }
+
 }

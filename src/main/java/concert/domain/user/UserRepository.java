@@ -10,4 +10,5 @@ public interface UserRepository {
 
     AmountHistory save(AmountHistory amountHistory);
     void deleteAllInBatch();
+
 }

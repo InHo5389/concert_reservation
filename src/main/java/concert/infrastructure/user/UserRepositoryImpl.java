@@ -35,6 +35,7 @@ public class UserRepositoryImpl implements UserRepository {
         return amountJpaHistory.save(amountHistory);
     }
 
+
     @Override
     public void deleteAllInBatch() {
         userJpaRepository.deleteAllInBatch();

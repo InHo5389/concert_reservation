@@ -2,10 +2,12 @@ package concert.controller.concert;
 
 import concert.application.ConcertFacade;
 import concert.controller.concert.request.AvailableSeatRequest;
+
 import concert.controller.concert.request.CreateConcertRequest;
 import concert.controller.concert.response.AvailableConcertDateResponse;
 import concert.controller.concert.response.CreateConcertResponse;
 import concert.domain.concert.CreateConcertDto;
+
 import concert.domain.concert.Seat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +22,7 @@ public class ConcertController {
     private final ConcertFacade concertFacade;
 
     @GetMapping("/seats")
-    public List<Seat> getAvailableSeat(@RequestBody AvailableSeatRequest request) {
+    public List<Seat> getAvailableSeat(@RequestBody AvailableSeatRequest request){
         return concertFacade.availableSeats(request.getConcertId(), request.getConcertDate());
     }
 

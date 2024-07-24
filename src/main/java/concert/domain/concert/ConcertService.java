@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 @Slf4j
 @Service
@@ -24,7 +27,8 @@ public class ConcertService {
 
 
     public List<ConcertSchedule> availableDates(Long concertId) {
-        log.info("ConcertService availableDates(): concertId={}", concertId);
+        log.info("ConcertService availableDates(): concertId={}",concertId);
+
         Concert concert = getConcert(concertId);
 
         LocalDateTime now = LocalDateTime.now();
@@ -34,21 +38,31 @@ public class ConcertService {
     }
 
     public List<Seat> availableSeats(Long concertId, LocalDateTime concertDate) {
+
         log.info("ConcertService availableSeats(): concertId={}, concertDate={}", concertId, concertDate);
         Concert concert = getConcert(concertId);
 
         ConcertSchedule concertSchedule = concertRepository.findByConcertIdAndConcertDateTime(concert.getId(), concertDate)
                 .orElseThrow(() -> new BusinessException("해당 날짜에 해당하는 콘서트가 없습니다."));
+
+        log.info("ConcertService availableSeats(): concertId={}, concertDate={}",concertId,concertDate);
+        Concert concert = getConcert(concertId);
+
+        ConcertSchedule concertSchedule = concertRepository.findByConcertIdAndConcertDateTime(concert.getId(), concertDate)
+                .orElseThrow(()->new BusinessException("해당 날짜에 해당하는 콘서트가 없습니다."));
+
         return concertRepository.findByConcertScheduleIdAndSeatStatus(concertSchedule.getConcertId(), SeatStatus.AVAILABLE);
     }
 
     public Concert getConcert(Long concertId) {
-        log.info("ConcertService getConcert(): concertId={}", concertId);
+        log.info("ConcertService getConcert(): concertId={}",concertId);
+      
         return concertRepository.findById(concertId)
                 .orElseThrow(() -> new BusinessException("해당 콘서트가 없습니다."));
     }
 
     public Seat getSeat(Long seatId) {
+
         log.info("ConcertService getSeat(): seatId={}", seatId);
         return concertRepository.findBySeatId(seatId)
                 .orElseThrow(() -> new BusinessException("좌석이 존재하지 않습니다."));
@@ -86,4 +100,5 @@ public class ConcertService {
         int priceLevel = (seatNumber - 1) / SEAT_PER_PRICE_LEVEL;
         return baseSeatPrice - (priceLevel * PRICE_DECREMENT);
     }
+
 }
