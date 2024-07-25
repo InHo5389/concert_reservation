@@ -26,6 +26,11 @@ public class UserService {
                 .orElseThrow(() -> new BusinessException("회원을 찾을수 없습니다."));
     }
 
+    public User getUserWithPessimisticLock(Long userId) {
+        return userRepository.findByIdWithPessimisticLock(userId)
+                .orElseThrow(() -> new BusinessException("회원을 찾을수 없습니다."));
+    }
+
     @Transactional
     public void processPayment(Long userId, int amount) {
         log.info("UserService processPayment(): userId={}, amount={}", userId, amount);
@@ -43,21 +48,17 @@ public class UserService {
     @Transactional
     public AmountChargeDto chargeAmount(Long userId, int amount) {
         log.info("UserService chargeAmount(): userId={}, amount={}", userId, amount);
-        try {
-            User user = getUserWithOptimisticLock(userId);
 
-            int savedAmount = user.chargeAmount(amount);
-            AmountHistory amountHistory = userRepository.save(AmountHistory.builder()
-                    .userId(userId)
-                    .remainAmount(savedAmount)
-                    .useAmount(amount)
-                    .status(AmountStatus.CHARGE)
-                    .build());
-            return new AmountChargeDto(user, amountHistory);
-        }catch (OptimisticLockingFailureException e) {
-            log.warn("충전 중 낙관적 락 예외 발생. userId: {}, amount: {}", userId, amount);
-            throw new BusinessException("짧은 시간 내에 포인트 충전 요청이 들어와 작업을 차단시켰습니다.");
-        }
+        User user = getUserWithPessimisticLock(userId);
+
+        int savedAmount = user.chargeAmount(amount);
+        AmountHistory amountHistory = userRepository.save(AmountHistory.builder()
+                .userId(userId)
+                .remainAmount(savedAmount)
+                .useAmount(amount)
+                .status(AmountStatus.CHARGE)
+                .build());
+        return new AmountChargeDto(user, amountHistory);
     }
 
     private void saveAmountHistory(User user, int amount) {

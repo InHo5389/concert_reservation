@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @ActiveProfiles("test")
 @SpringBootTest
-public class UserPointConcurrencyOptimisticLock {
+public class UserPointConcurrencyPessimisticLock {
 
     @Autowired
     private UserRepository userRepository;
@@ -34,9 +34,9 @@ public class UserPointConcurrencyOptimisticLock {
 
     @Test
     @DisplayName("한 유저가 0원을 가지고 있고 포인트를 1000원씩 1000번 충전할때 1000000원이 나와야 한다.")
-    void UserPointConcurrencyOptimisticLock() throws InterruptedException {
+    void UserPointConcurrencyPessimisticLock() throws InterruptedException {
         long startTime = System.currentTimeMillis();
-        System.out.println("Execution time with Composite Key Test Start " + startTime + "ms");
+        System.out.println("Execution time with PessimisticLock Test Start " + startTime + "ms");
         AtomicInteger failedReservations = new AtomicInteger(0);
 
         ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
@@ -48,9 +48,7 @@ public class UserPointConcurrencyOptimisticLock {
             executorService.submit(() -> {
                 try {
                     userFacade.chargeAmount(userId,1000);
-                }catch (OptimisticLockingFailureException e){
-                    failedReservations.incrementAndGet();
-                } finally {
+                }finally {
                     latch.countDown();
                 }
             });
@@ -59,12 +57,11 @@ public class UserPointConcurrencyOptimisticLock {
         latch.await();
         executorService.shutdown();
 
-        int failCount = failedReservations.get();
         long endTime = System.currentTimeMillis();
         long executionTime = endTime - startTime;
-        System.out.println("Execution time with Optimistic Lock: " + executionTime + "ms");
+        System.out.println("Execution time with Pessimistic Lock: " + executionTime + "ms");
         User user = userRepository.findById(userId).get();
-        Assertions.assertThat(user.getAmount()).isEqualTo(1000000 - (failCount * 1000));
+        Assertions.assertThat(user.getAmount()).isEqualTo(1000000);
 
     }
 }
