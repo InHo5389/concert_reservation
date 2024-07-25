@@ -1,12 +1,9 @@
 package concert.domain.reservation;
 
 import concert.application.ReservationFacade;
-import concert.application.dto.ReservationDto;
-import concert.common.exception.BusinessException;
 import concert.domain.concert.*;
 import concert.domain.user.User;
 import concert.domain.user.UserRepository;
-import jakarta.persistence.OptimisticLockException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.CountDownLatch;
@@ -22,12 +18,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
-
 @ActiveProfiles("test")
 @SpringBootTest
-class ReservationConcurrencyOptimisticTest {
+class ReservationConcurrencyPessimisticTest {
 
     @Autowired
     private ReservationFacade reservationFacade;
@@ -59,12 +52,11 @@ class ReservationConcurrencyOptimisticTest {
                 .seatNumber(1)
                 .seatStatus(SeatStatus.AVAILABLE)
                 .seatPrice(100)
-//                .version(0L)
                 .build());
     }
 
     /**
-     * 낙관적 락을 통한 동시성 제어
+     * 비관적 락을 통한 동시성 제어
      */
     @Test
     @DisplayName("userId가 다른 10명이 같은 좌석을 예약할 때 1명만 좌석을 예약할 수 있다.")

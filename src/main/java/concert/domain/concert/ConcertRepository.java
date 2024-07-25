@@ -22,6 +22,7 @@ public interface ConcertRepository {
     Seat save(Seat seat);
     Optional<Seat> findBySeatId(Long seatId);
     Optional<Seat> findByIdOptimisticLock(Long seatId);
+    Optional<Seat> findByIdPessimisticLock(Long seatId);
 
     void deleteAllInBatch();
     List<Seat> saveAll(List<Seat> seats);

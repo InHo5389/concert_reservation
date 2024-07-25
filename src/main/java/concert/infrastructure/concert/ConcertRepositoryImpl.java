@@ -72,6 +72,11 @@ public class ConcertRepositoryImpl implements ConcertRepository {
         return seatJpaRepository.findByIdOptimisticLock(seatId);
     }
 
+    @Override
+    public Optional<Seat> findByIdPessimisticLock(Long seatId) {
+        return seatJpaRepository.findByIdPessimisticLock(seatId);
+    }
+
 
     @Override
     public void deleteAllInBatch() {

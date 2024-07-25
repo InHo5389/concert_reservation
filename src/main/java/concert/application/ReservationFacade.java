@@ -14,6 +14,7 @@ import concert.domain.token.jwt.WaitingTokenValidator;
 import concert.domain.user.User;
 import concert.domain.user.UserService;
 import jakarta.persistence.OptimisticLockException;
+import jakarta.persistence.PessimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -36,27 +37,16 @@ public class ReservationFacade {
         log.info("ReservationFacade reserveSeat(): concertDate={}, seatId={}", concertDate, seatId);
         User user = userService.getUser(userId);
 
-        try {
-            Seat seat = concertService.getSeatByOptimisticLock(seatId);
 
-            /**
-             * 생각 해보니까 낙관적 락 만을 사용하는게 아니라 이 if문을 통해 제어를 같이 한다는 생각이 들었습니다.
-             * 이 if문 없이 낙관적락 버전이 바뀌면 아래 catch문으로 가고싶은데 왜 안걸리는지 잘 모르겠습니다..
-             */
-            if (seat.getSeatStatus() != SeatStatus.AVAILABLE) {
-                throw new BusinessException("이미 예약된 좌석입니다.");
-            }
+        Seat seat = concertService.getSeatByPessimisticLock(seatId);
 
-            concertService.getConcertSchedule(seat.getConcertScheduleId());
+        concertService.getConcertSchedule(seat.getConcertScheduleId());
 
-            Reservation reservation = reservationService.reserveSeat(concertDate, seatId, userId, seat.getSeatPrice());
-            seat.seatStatusReserved();
+        Reservation reservation = reservationService.reserveSeat(concertDate, seatId, userId, seat.getSeatPrice());
+        seat.seatStatusReserved();
 
-            return new ReservationDto(user.getUsername(), reservation.getCreatedAt(), reservation.getExpirationTime(), seat.getSeatNumber(), seat.getSeatPrice());
-        } catch (OptimisticLockException e) {
-            log.warn("낙관적 락 충돌 발생. 좌석 예약 실패: seatId={}", seatId);
-            throw new BusinessException("이미 예약된 좌석입니다. 다른 좌석을 사용하여 주세요.");
-        }
+        return new ReservationDto(user.getUsername(), reservation.getCreatedAt(), reservation.getExpirationTime(), seat.getSeatNumber(), seat.getSeatPrice());
+
     }
 
 

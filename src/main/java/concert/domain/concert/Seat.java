@@ -29,10 +29,10 @@ public class Seat {
     private SeatStatus seatStatus;
     private int seatPrice;
 
-    @Version
-    private Long version;
-
     public void seatStatusReserved(){
+        if (this.seatStatus != SeatStatus.AVAILABLE) {
+            throw new BusinessException("이미 예약된 좌석입니다.");
+        }
         this.seatStatus = SeatStatus.RESERVED;
     }
     public void seatStatusAvailable(){
