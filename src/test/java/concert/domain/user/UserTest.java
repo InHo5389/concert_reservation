@@ -12,7 +12,7 @@ class UserTest {
     void getAmount(){
         //given
         int userAmount = 5000;
-        User user = new User(1L, "1234@naver.com", "1234", "이노", "01012345678", userAmount);
+        User user = User.builder().phone("01012345678").amount(userAmount).build();
         //when
         int amount = user.getAmount();
         //then
@@ -25,7 +25,7 @@ class UserTest {
         //given
         long chargeAmount = 2000;
         int userAmount = 5000;
-        User user = new User(1L, "1234@naver.com", "1234", "이노", "01012345678", userAmount);
+        User user = User.builder().phone("01012345678").amount(userAmount).build();
         //when
         int amount = user.chargeAmount(chargeAmount);
         //then

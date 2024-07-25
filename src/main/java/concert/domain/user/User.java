@@ -27,6 +27,9 @@ public class User {
     private String phone;
     private int amount;
 
+    @Version
+    private Long version;
+
     public int chargeAmount(long amount) {
         log.info("chargeAmount(): username={},amount={}",this.username,amount);
         return this.amount += amount;

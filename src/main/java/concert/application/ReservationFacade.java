@@ -39,6 +39,10 @@ public class ReservationFacade {
         try {
             Seat seat = concertService.getSeatByOptimisticLock(seatId);
 
+            /**
+             * 생각 해보니까 낙관적 락 만을 사용하는게 아니라 이 if문을 통해 제어를 같이 한다는 생각이 들었습니다.
+             * 이 if문 없이 낙관적락 버전이 바뀌면 아래 catch문으로 가고싶은데 왜 안걸리는지 잘 모르겠습니다..
+             */
             if (seat.getSeatStatus() != SeatStatus.AVAILABLE) {
                 throw new BusinessException("이미 예약된 좌석입니다.");
             }

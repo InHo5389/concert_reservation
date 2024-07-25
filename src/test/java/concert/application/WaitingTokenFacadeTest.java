@@ -40,7 +40,7 @@ class WaitingTokenFacadeTest {
     @DisplayName("토큰을 발급하면 대기열 토큰 db에 저장된다..")
     void issueToken(){
         //given
-        User user = userRepository.save(new User(1L, "12@naver.com", "1234", "인호", "01012345678", 5000));
+        User user = userRepository.save(User.builder().phone("01012345678").build());
         //when
         WaitingTokenIssueTokenDto issueTokenDto = waitingTokenFacade.issueToken(user.getId());
         WaitingToken waitingToken = waitingTokenRepository.findByUserId(user.getId()).get();
