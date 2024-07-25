@@ -1,7 +1,14 @@
 package concert.domain.reservation;
 
+import concert.application.ConcertFacade;
+import concert.application.ReservationFacade;
+import concert.application.dto.ReservationDto;
 import concert.common.exception.BusinessException;
+import concert.domain.concert.*;
+import concert.domain.user.User;
+import concert.domain.user.UserRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +27,32 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("test")
-@Transactional
 @SpringBootTest
 class ReservationServiceConcurrencyTest {
 
     @Autowired
-    private ReservationService reservationService;
+    private ReservationFacade reservationFacade;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ConcertRepository concertRepository;
+
+    private static final int numberOfThreads = 1000;
+
+    @BeforeEach
+    void setUp(){
+        for (int i = 1; i <= numberOfThreads ; i++) {
+            userRepository.save(User.builder().amount(1000000).username("정인호"+i).build());
+        }
+        long concertId = 1L;
+        long concertScheduleId = 1L;
+        long seatId = 1L;
+        concertRepository.save(new Concert(concertId,"임영웅 콘서트","임영웅"));
+        concertRepository.save(new ConcertSchedule(concertScheduleId,concertId,LocalDateTime.now().plusDays(5)));
+        concertRepository.save(new Seat(seatId,concertScheduleId,1, SeatStatus.AVAILABLE,100));
+    }
 
     /**
      * 복합 키를 통한 동시성 제어
@@ -36,7 +63,6 @@ class ReservationServiceConcurrencyTest {
         long startTime = System.currentTimeMillis();
         System.out.println("Execution time with Composite Key Test Start "+startTime+"ms");
 
-        int numberOfThreads = 10;
         ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
         CountDownLatch latch = new CountDownLatch(numberOfThreads);
         AtomicInteger successfulReservations = new AtomicInteger(0);
@@ -49,14 +75,17 @@ class ReservationServiceConcurrencyTest {
             Long userId = (long) i;
             executorService.submit(() -> {
                 try {
-                    Reservation reservation = reservationService.reserveSeat(concertDate, seatId, userId, 100);
-                    assertNotNull(reservation);
+                    ReservationDto reservationDto = reservationFacade.reserveSeat(concertDate, seatId, userId);
+                    assertNotNull(reservationDto);
                     successfulReservations.incrementAndGet();
                 } catch (BusinessException e) {
+                    System.out.println(e.getMessage());
+                    System.out.println(e.getCause());
                     failedReservations.incrementAndGet();
                 } catch (Exception e) {
                     fail("Unexpected exception: " + e.getMessage());
-                } finally {
+                }
+                finally {
                     latch.countDown();
                 }
             });
