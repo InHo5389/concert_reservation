@@ -1,12 +1,12 @@
 package concert.domain.reservation;
 
-import concert.application.ConcertFacade;
 import concert.application.ReservationFacade;
 import concert.application.dto.ReservationDto;
 import concert.common.exception.BusinessException;
 import concert.domain.concert.*;
 import concert.domain.user.User;
 import concert.domain.user.UserRepository;
+import jakarta.persistence.OptimisticLockException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,18 +17,17 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @ActiveProfiles("test")
 @SpringBootTest
-class ReservationServiceConcurrencyTest {
+class ReservationConcurrencyOptimisticTest {
 
     @Autowired
     private ReservationFacade reservationFacade;
@@ -38,6 +37,9 @@ class ReservationServiceConcurrencyTest {
 
     @Autowired
     private ConcertRepository concertRepository;
+
+    @Autowired
+    private ReservationRepository reservationRepository;
 
     private static final int numberOfThreads = 1000;
 
@@ -57,15 +59,16 @@ class ReservationServiceConcurrencyTest {
                 .seatNumber(1)
                 .seatStatus(SeatStatus.AVAILABLE)
                 .seatPrice(100)
+                .version(0L)
                 .build());
     }
 
     /**
-     * 복합 키를 통한 동시성 제어
+     * 낙관적 락을 통한 동시성 제어
      */
     @Test
     @DisplayName("userId가 다른 10명이 같은 좌석을 예약할 때 1명만 좌석을 예약할 수 있다.")
-    void testReservationConcurrencyWithCompositeKey() throws InterruptedException {
+    void reservationConcurrencyWithOptimistic() throws InterruptedException {
         long startTime = System.currentTimeMillis();
         System.out.println("Execution time with Composite Key Test Start " + startTime + "ms");
 
@@ -78,18 +81,14 @@ class ReservationServiceConcurrencyTest {
         Long seatId = 1L;
 
         for (int i = 0; i < numberOfThreads; i++) {
-            Long userId = (long) i;
+            Long userId = (long) i + 1;
             executorService.submit(() -> {
                 try {
-                    ReservationDto reservationDto = reservationFacade.reserveSeat(concertDate, seatId, userId);
-                    assertNotNull(reservationDto);
+                    reservationFacade.reserveSeat(concertDate, seatId, userId);
                     successfulReservations.incrementAndGet();
-                } catch (BusinessException e) {
-                    System.out.println(e.getMessage());
-                    System.out.println(e.getCause());
-                    failedReservations.incrementAndGet();
                 } catch (Exception e) {
-                    fail("Unexpected exception: " + e.getMessage());
+                    System.out.println("예외 발생: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+                    failedReservations.incrementAndGet();
                 } finally {
                     latch.countDown();
                 }
@@ -101,8 +100,9 @@ class ReservationServiceConcurrencyTest {
 
         long endTime = System.currentTimeMillis();
         long executionTime = endTime - startTime;
-        System.out.println("Execution time with Composite Key: " + executionTime + "ms");
-
+        System.out.println("Execution time with Optimistic: " + executionTime + "ms");
+        System.out.println("successfulReservations.get()" + successfulReservations.get());
+        System.out.println("failedReservations.get()" + failedReservations.get());
         Assertions.assertThat(1).isEqualTo(successfulReservations.get());
         Assertions.assertThat(numberOfThreads - 1).isEqualTo(failedReservations.get());
     }

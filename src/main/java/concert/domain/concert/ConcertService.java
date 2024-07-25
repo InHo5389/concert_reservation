@@ -2,6 +2,7 @@ package concert.domain.concert;
 
 import concert.application.dto.CreateConcertDto;
 import concert.common.exception.BusinessException;
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class ConcertService {
 
 
     public List<ConcertSchedule> availableDates(Long concertId) {
-        log.info("ConcertService availableDates(): concertId={}",concertId);
+        log.info("ConcertService availableDates(): concertId={}", concertId);
 
         Concert concert = getConcert(concertId);
 
@@ -37,18 +38,18 @@ public class ConcertService {
     }
 
     public List<Seat> availableSeats(Long concertId, LocalDateTime concertDate) {
-        log.info("ConcertService availableSeats(): concertId={}, concertDate={}",concertId,concertDate);
+        log.info("ConcertService availableSeats(): concertId={}, concertDate={}", concertId, concertDate);
         Concert concert = getConcert(concertId);
 
         ConcertSchedule concertSchedule = concertRepository.findByConcertIdAndConcertDateTime(concert.getId(), concertDate)
-                .orElseThrow(()->new BusinessException("해당 날짜에 해당하는 콘서트가 없습니다."));
+                .orElseThrow(() -> new BusinessException("해당 날짜에 해당하는 콘서트가 없습니다."));
 
         return concertRepository.findByConcertScheduleIdAndSeatStatus(concertSchedule.getConcertId(), SeatStatus.AVAILABLE);
     }
 
     public Concert getConcert(Long concertId) {
-        log.info("ConcertService getConcert(): concertId={}",concertId);
-      
+        log.info("ConcertService getConcert(): concertId={}", concertId);
+
         return concertRepository.findById(concertId)
                 .orElseThrow(() -> new BusinessException("해당 콘서트가 없습니다."));
     }
@@ -60,22 +61,29 @@ public class ConcertService {
                 .orElseThrow(() -> new BusinessException("좌석이 존재하지 않습니다."));
     }
 
-    public ConcertSchedule getConcertSchedule(Long concertScheduleId){
+    public Seat getSeatByOptimisticLock(Long seatId) {
+        log.info("ConcertService getSeatByOptimisticLock(): seatId={}", seatId);
+
+        return concertRepository.findByIdOptimisticLock(seatId)
+                .orElseThrow(() -> new BusinessException("좌석이 존재하지 않습니다."));
+    }
+
+    public ConcertSchedule getConcertSchedule(Long concertScheduleId) {
         return concertRepository.findScheduleById(concertScheduleId)
                 .orElseThrow(() -> new BusinessException("콘서트 스케줄이 존재하지 않습니다."));
     }
 
     @Transactional
-    public CreateConcertDto createConcert(String name, String title, LocalDateTime concertDateTime , int baseSeatPrice) {
+    public CreateConcertDto createConcert(String name, String title, LocalDateTime concertDateTime, int baseSeatPrice) {
         Concert concert = concertRepository.save(Concert.create(title, name));
-        ConcertSchedule concertSchedule = concertRepository.save(ConcertSchedule.create(concert.getId(),concertDateTime));
+        ConcertSchedule concertSchedule = concertRepository.save(ConcertSchedule.create(concert.getId(), concertDateTime));
 
 
         List<Seat> seats = createSeats(concertSchedule.getId(), baseSeatPrice);
 
         List<Seat> savedSeats = concertRepository.saveAll(seats);
 
-        return new CreateConcertDto(concert.getId(), concert.getTitle(), concert.getName(), concertSchedule.getId(), concertSchedule.getConcertDateTime(),savedSeats);
+        return new CreateConcertDto(concert.getId(), concert.getTitle(), concert.getName(), concertSchedule.getId(), concertSchedule.getConcertDateTime(), savedSeats);
     }
 
     public List<Seat> createSeats(Long concertScheduleId, int baseSeatPrice) {

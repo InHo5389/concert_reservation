@@ -14,10 +14,6 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(uniqueConstraints = {
-
-        @UniqueConstraint(columnNames = {"concertDate", "seatId"})
-})
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
