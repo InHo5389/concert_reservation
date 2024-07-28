@@ -35,28 +35,24 @@ public class ReservationService {
     }
 
     @Transactional
-    public Reservation reserveSeat(LocalDateTime concertDate, Long seatId,Long userId,int seatPrice) {
+    public Reservation reserveSeat(LocalDateTime concertDate, Long seatId, Long userId, int seatPrice) {
         log.info("ReservationService reserveSeat()");
         Reservation existingReservation = reservationRepository.findByConcertDateAndSeatIdAndStatus(concertDate, seatId, ReservationStatus.RESERVED);
         if (existingReservation != null) {
-            log.warn("Duplicated Reservation Seat: concertDate={}, seatId={}",concertDate,seatId);
+            log.warn("Duplicated Reservation Seat: concertDate={}, seatId={}", concertDate, seatId);
             throw new BusinessException("좌석이 이미 예약되었습니다.");
         }
 
-        Reservation reservation = Reservation.createReservation(seatId,concertDate,FIXED_EXPIRED_MINUTES,userId,seatPrice);
+        Reservation reservation = Reservation.createReservation(seatId, concertDate, FIXED_EXPIRED_MINUTES, userId, seatPrice);
 
-        try {
-            return reservationRepository.save(reservation);
-        } catch (DataIntegrityViolationException e) {
-            log.warn("Concurrency Reservation Seat: seatId",reservation.getSeatId());
-            throw new BusinessException("동시에 같은 좌석을 예약하려는 시도가 있었습니다.");
-        }
+        return reservationRepository.save(reservation);
+
     }
 
     @Transactional
     public Payment createPayment(long reservationId, int amount) {
         log.info("ReservationService createPayment()");
-        Payment payment = Payment.createPayment(reservationId,amount);
+        Payment payment = Payment.createPayment(reservationId, amount);
         return reservationRepository.save(payment);
     }
 }

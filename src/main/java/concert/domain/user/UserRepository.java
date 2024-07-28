@@ -10,5 +10,6 @@ public interface UserRepository {
 
     AmountHistory save(AmountHistory amountHistory);
     void deleteAllInBatch();
-
+    Optional<User> findByIdWithOptimisticLock(Long id);
+    Optional<User> findByIdWithPessimisticLock(Long id);
 }

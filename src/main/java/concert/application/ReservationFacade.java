@@ -1,6 +1,7 @@
 package concert.application;
 
 import concert.application.dto.ReservationDto;
+import concert.common.exception.BusinessException;
 import concert.domain.concert.ConcertSchedule;
 import concert.domain.concert.ConcertService;
 import concert.domain.concert.Seat;
@@ -12,8 +13,11 @@ import concert.domain.reservation.ReservationService;
 import concert.domain.token.jwt.WaitingTokenValidator;
 import concert.domain.user.User;
 import concert.domain.user.UserService;
+import jakarta.persistence.OptimisticLockException;
+import jakarta.persistence.PessimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,13 +37,18 @@ public class ReservationFacade {
         log.info("ReservationFacade reserveSeat(): concertDate={}, seatId={}", concertDate, seatId);
         User user = userService.getUser(userId);
 
-        Seat seat = concertService.getSeat(seatId);
+
+        Seat seat = concertService.getSeatByPessimisticLock(seatId);
+
         concertService.getConcertSchedule(seat.getConcertScheduleId());
+
         Reservation reservation = reservationService.reserveSeat(concertDate, seatId, userId, seat.getSeatPrice());
         seat.seatStatusReserved();
-        return new ReservationDto(user.getUsername(),reservation.getCreatedAt(),reservation.getExpirationTime(),
-                seat.getSeatNumber(),seat.getSeatPrice());
+
+        return new ReservationDto(user.getUsername(), reservation.getCreatedAt(), reservation.getExpirationTime(), seat.getSeatNumber(), seat.getSeatPrice());
+
     }
+
 
     public PaymentDto pay(Long reservationId, Long userId) {
         log.info("ReservationFacade pay(): reservationId={}, userId={}, amount={}", reservationId, userId);

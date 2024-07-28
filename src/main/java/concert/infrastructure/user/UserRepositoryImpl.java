@@ -40,4 +40,14 @@ public class UserRepositoryImpl implements UserRepository {
     public void deleteAllInBatch() {
         userJpaRepository.deleteAllInBatch();
     }
+
+    @Override
+    public Optional<User> findByIdWithOptimisticLock(Long id) {
+        return userJpaRepository.findByIdWithOptimisticLock(id);
+    }
+
+    @Override
+    public Optional<User> findByIdWithPessimisticLock(Long id) {
+        return userJpaRepository.findByIdWithPessimisticLock(id);
+    }
 }

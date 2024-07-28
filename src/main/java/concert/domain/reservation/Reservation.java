@@ -7,17 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 
+
 @Slf4j
 @Getter
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"concertDate", "seatId"})
-})
 public class Reservation {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

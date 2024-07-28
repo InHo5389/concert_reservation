@@ -35,7 +35,7 @@ class UserServiceTest {
         //given
         int chargeAmount = 300;
         int userAmount = 5500;
-        User user = new User(null, "1@naver.com", "1234", "이노", "01012345678", userAmount);
+        User user = userRepository.save(User.builder().phone("01012345678").amount(userAmount).build());
         userRepository.save(user);
         //when
         AmountChargeDto amountHistory = userService.chargeAmount(user.getId(), chargeAmount);

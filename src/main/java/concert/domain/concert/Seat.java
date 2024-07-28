@@ -1,5 +1,6 @@
 package concert.domain.concert;
 
+import concert.common.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,11 +30,15 @@ public class Seat {
     private int seatPrice;
 
     public void seatStatusReserved(){
+        if (this.seatStatus != SeatStatus.AVAILABLE) {
+            throw new BusinessException("이미 예약된 좌석입니다.");
+        }
         this.seatStatus = SeatStatus.RESERVED;
     }
     public void seatStatusAvailable(){
         this.seatStatus = SeatStatus.AVAILABLE;
     }
+
     public static Seat create(Long concertScheduleId,int seatNumber,int seatPrice){
         return Seat.builder()
                 .concertScheduleId(concertScheduleId)

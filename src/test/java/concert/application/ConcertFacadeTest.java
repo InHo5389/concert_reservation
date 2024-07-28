@@ -66,7 +66,7 @@ class ConcertFacadeTest {
     @DisplayName("토큰이 Active상태일때 콘서트 스케줄을 조회할 수 있다..")
     void getConcertSchedule(){
 
-        userRepository.save(new User(null,"12@naver.com","1234","인호","01012345678",500));
+        userRepository.save(User.builder().phone("01012345678").build());
 
         Concert concert = concertRepository.save(new Concert(null, "임영웅", "임영웅"));
 
@@ -85,7 +85,7 @@ class ConcertFacadeTest {
     @DisplayName("현재 일시에 콘서트 스케줄을 조회할때 스케줄이 지나지 않은 콘서트 스케줄만 조회된다.")
     void getConcertSchedule_FAIL(){
         //given
-        userRepository.save(new User(null,"12@naver.com","1234","인호","01012345678",500));
+        userRepository.save(User.builder().phone("01012345678").build());
 
         Concert concert = concertRepository.save(new Concert(null, "임영웅 콘서트", "임영웅"));
         concertRepository.save(new ConcertSchedule(null,concert.getId(), LocalDateTime.now().minusDays(1)));
