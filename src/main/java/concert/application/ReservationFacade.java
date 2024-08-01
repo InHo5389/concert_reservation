@@ -38,7 +38,7 @@ public class ReservationFacade {
         User user = userService.getUser(userId);
 
 
-        Seat seat = concertService.getSeatByPessimisticLock(seatId);
+        Seat seat = concertService.getSeatByOptimisticLock(seatId);
 
         concertService.getConcertSchedule(seat.getConcertScheduleId());
 
