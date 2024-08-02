@@ -20,8 +20,8 @@ public class TokenController {
     private final WaitingTokenFacade waitingTokenFacade;
 
     @PostMapping("/tokens/{userId}")
-    public WaitingTokenIssueTokenResponse issueToken(@PathVariable Long userId) {
-        return WaitingTokenIssueTokenResponse.of(waitingTokenFacade.issueToken(userId));
+    public void issueToken(@PathVariable Long userId) {
+        waitingTokenFacade.issueToken(userId);
     }
 
     @GetMapping("/tokens")

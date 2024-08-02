@@ -18,10 +18,10 @@ public class WaitingTokenFacade {
     private final UserService userService;
 
     @Transactional
-    public WaitingTokenIssueTokenDto issueToken(Long userId){
+    public void issueToken(Long userId){
         log.info("WaitingTokenFacade issueToken(): userId={}",userId);
         userService.getUser(userId);
-        return waitingTokenService.issueToken(userId);
+        waitingTokenService.issueWaitingToken(userId);
     }
 
     @Transactional(readOnly = true)
