@@ -1,12 +1,15 @@
 package concert.domain.token;
 
 import concert.common.exception.BusinessException;
+import concert.domain.common.RedisRepository;
 import concert.domain.token.dto.WaitingOrderDto;
 import concert.domain.token.dto.WaitingTokenIssueTokenDto;
 import concert.domain.token.jwt.WaitingTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 import static concert.domain.token.TokenStatus.*;
 
@@ -17,20 +20,15 @@ public class WaitingTokenService {
 
     private final WaitingTokenRepository waitingTokenRepository;
     private final WaitingTokenProvider tokenProvider;
+    private final RedisRepository redisRepository;
 
     private static final int EXPIRATION_MINUTES = 5;
-    private static final int FIX_ACTIVE_COUNT = 30;
+    private static final String ACTIVE_QUEUE = "activequeue";
+    private static final String WAITING_QUEUE = "waitingqueue";
 
-
-    public WaitingTokenIssueTokenDto issueToken(Long userId) {
+    public void issueWaitingToken(Long userId) {
         log.info("WaitingTokenService issueToken(): userId={}",userId);
-        int activeCount = waitingTokenRepository.countByTokenStatus(ACTIVE);
-        WaitingToken issuedWaitingToken = WaitingToken.issue(userId, activeCount, FIX_ACTIVE_COUNT, EXPIRATION_MINUTES);
-        WaitingToken savedWaitingToken = waitingTokenRepository.save(issuedWaitingToken);
-
-        String jwtToken = tokenProvider.issueToken(userId,issuedWaitingToken.getCreatedAt(), EXPIRATION_MINUTES);
-
-        return WaitingTokenIssueTokenDto.from(savedWaitingToken, jwtToken);
+        redisRepository.zSetAdd(WAITING_QUEUE,String.valueOf(userId),System.currentTimeMillis());
     }
 
     public WaitingOrderDto getWaitingOrder(Long userId){

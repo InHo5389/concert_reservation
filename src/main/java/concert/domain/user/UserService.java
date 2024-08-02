@@ -17,6 +17,7 @@ public class UserService {
 
 
     public User getUser(Long userId) {
+        log.info("getUser()");
         return userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException("회원을 찾을수 없습니다."));
     }

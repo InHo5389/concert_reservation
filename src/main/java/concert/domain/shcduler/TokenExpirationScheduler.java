@@ -1,6 +1,7 @@
 package concert.domain.shcduler;
 
 import concert.common.exception.BusinessException;
+import concert.domain.common.RedisRepository;
 import concert.domain.concert.ConcertRepository;
 import concert.domain.concert.Seat;
 import concert.domain.reservation.Reservation;
@@ -18,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -27,23 +30,26 @@ public class TokenExpirationScheduler {
     private final WaitingTokenRepository waitingTokenRepository;
     private final ReservationRepository reservationRepository;
     private final ConcertRepository concertRepository;
+    private final RedisRepository redisRepository;
+
+    private static final String ACTIVE_QUEUE = "activequeue";
+    private static final String WAITING_QUEUE = "waitingqueue";
 
     /**
-     * 만료된 토큰 상태를 EXPIRED 변경하는 스케줄러
+     * 20초마다 50명을 active queue로 넘기는 스케줄러
      */
-    @Scheduled(fixedRate = 60000) // 1분마다 실행
+    @Scheduled(fixedRate = 20000) // 20초마다 실행
     @Transactional
-    public void expireTokens() {
-        LocalDateTime now = LocalDateTime.now();
-        List<WaitingToken> expiredTokens = waitingTokenRepository.findByExpiredAtBeforeAndTokenStatus(now, TokenStatus.ACTIVE);
+    public void moveToActiveQueue() {
+        Set<String> topNSortedSet = redisRepository.getTopNSortedSet(WAITING_QUEUE, 50);
+        if (!topNSortedSet.isEmpty()) {
+            redisRepository.removeFromSortedSet(WAITING_QUEUE, topNSortedSet);
 
-        for (WaitingToken token : expiredTokens) {
-            token.expire();
-            log.info("Token expired: {}", token.getId());
+            Set<String> usersWithTimestamp  = topNSortedSet.stream()
+                    .map(userId -> userId + ":" + LocalDateTime.now().plusMinutes(5))
+                    .collect(Collectors.toSet());
+            redisRepository.addAllToSet(ACTIVE_QUEUE, usersWithTimestamp);
         }
-
-        waitingTokenRepository.saveAll(expiredTokens);
-        log.info("Expired {} tokens", expiredTokens.size());
     }
 
     /**
@@ -84,7 +90,7 @@ public class TokenExpirationScheduler {
                     .orElseThrow(() -> new BusinessException("해당 좌석이 없습니다."));
             seat.seatStatusAvailable();
             reservationRepository.delete(reservation);
-            log.info("Deleted reservation: {}",reservation.getId());
+            log.info("Deleted reservation: {}", reservation.getId());
         }
     }
 }
