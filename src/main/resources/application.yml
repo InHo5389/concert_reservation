@@ -3,11 +3,14 @@ spring:
     active: mysql
 ---
 spring:
+  config:
+    activate:
+      on-profile: mysql
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/concert
     username: root
-    password: root
+    password: admin
   jpa:
     properties:
       hibernate:

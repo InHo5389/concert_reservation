@@ -1,5 +1,6 @@
 package concert.domain.user;
 
+import concert.domain.user.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

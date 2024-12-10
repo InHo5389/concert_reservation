@@ -1,7 +1,7 @@
 package concert.infrastructure.concert;
 
 import concert.domain.concert.ConcertRepository;
-import concert.domain.concert.Seat;
+import concert.domain.concert.entity.Seat;
 import concert.domain.concert.SeatStatus;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

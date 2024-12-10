@@ -1,6 +1,6 @@
 package concert.infrastructure.concert;
 
-import concert.domain.concert.Seat;
+import concert.domain.concert.entity.Seat;
 import concert.domain.concert.SeatStatus;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;

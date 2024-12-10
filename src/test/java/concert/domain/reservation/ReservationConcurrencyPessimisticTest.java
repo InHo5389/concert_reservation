@@ -2,7 +2,10 @@ package concert.domain.reservation;
 
 import concert.application.ReservationFacade;
 import concert.domain.concert.*;
-import concert.domain.user.User;
+import concert.domain.concert.entity.Concert;
+import concert.domain.concert.entity.ConcertSchedule;
+import concert.domain.concert.entity.Seat;
+import concert.domain.user.entity.User;
 import concert.domain.user.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

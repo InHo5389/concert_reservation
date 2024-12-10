@@ -1,5 +1,8 @@
 package concert.domain.reservation;
 
+import concert.domain.reservation.entity.Payment;
+import concert.domain.reservation.entity.Reservation;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;

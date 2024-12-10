@@ -1,10 +1,12 @@
 package concert.domain.user;
 
 import concert.common.exception.BusinessException;
-import jakarta.persistence.OptimisticLockException;
+import concert.domain.user.dto.AmountChargeDto;
+import concert.domain.user.dto.AmountGetDto;
+import concert.domain.user.entity.AmountHistory;
+import concert.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

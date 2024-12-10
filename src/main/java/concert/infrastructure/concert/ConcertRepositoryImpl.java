@@ -1,6 +1,9 @@
 package concert.infrastructure.concert;
 
 import concert.domain.concert.*;
+import concert.domain.concert.entity.Concert;
+import concert.domain.concert.entity.ConcertSchedule;
+import concert.domain.concert.entity.Seat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

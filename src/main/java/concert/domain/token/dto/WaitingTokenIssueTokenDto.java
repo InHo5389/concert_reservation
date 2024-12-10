@@ -1,7 +1,7 @@
 package concert.domain.token.dto;
 
 import concert.domain.token.TokenStatus;
-import concert.domain.token.WaitingToken;
+import concert.domain.token.entity.WaitingToken;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

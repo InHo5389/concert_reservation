@@ -2,7 +2,7 @@ package concert.domain.token.jwt;
 
 import concert.common.exception.BusinessException;
 import concert.domain.token.TokenStatus;
-import concert.domain.token.WaitingToken;
+import concert.domain.token.entity.WaitingToken;
 import concert.domain.token.WaitingTokenRepository;
 import concert.domain.token.WaitingTokenService;
 import concert.domain.token.dto.WaitingOrderDto;

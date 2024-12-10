@@ -1,23 +1,16 @@
 package concert.application;
 
 import concert.application.dto.ReservationDto;
-import concert.common.exception.BusinessException;
-import concert.domain.concert.ConcertSchedule;
 import concert.domain.concert.ConcertService;
-import concert.domain.concert.Seat;
-import concert.domain.concert.SeatStatus;
-import concert.domain.reservation.Payment;
-import concert.domain.reservation.PaymentDto;
-import concert.domain.reservation.Reservation;
+import concert.domain.concert.entity.Seat;
+import concert.domain.reservation.entity.Payment;
+import concert.domain.reservation.dto.PaymentDto;
+import concert.domain.reservation.entity.Reservation;
 import concert.domain.reservation.ReservationService;
-import concert.domain.token.jwt.WaitingTokenValidator;
-import concert.domain.user.User;
+import concert.domain.user.entity.User;
 import concert.domain.user.UserService;
-import jakarta.persistence.OptimisticLockException;
-import jakarta.persistence.PessimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

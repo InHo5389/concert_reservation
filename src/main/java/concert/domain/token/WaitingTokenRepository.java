@@ -1,5 +1,6 @@
 package concert.domain.token;
 
+import concert.domain.token.entity.WaitingToken;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;

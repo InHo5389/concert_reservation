@@ -1,11 +1,13 @@
 package concert.domain.reservation;
 
-import concert.application.ConcertFacade;
 import concert.application.ReservationFacade;
 import concert.application.dto.ReservationDto;
 import concert.common.exception.BusinessException;
 import concert.domain.concert.*;
-import concert.domain.user.User;
+import concert.domain.concert.entity.Concert;
+import concert.domain.concert.entity.ConcertSchedule;
+import concert.domain.concert.entity.Seat;
+import concert.domain.user.entity.User;
 import concert.domain.user.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,11 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

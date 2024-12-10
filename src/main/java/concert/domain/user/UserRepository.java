@@ -1,5 +1,8 @@
 package concert.domain.user;
 
+import concert.domain.user.entity.AmountHistory;
+import concert.domain.user.entity.User;
+
 import java.util.Optional;
 
 public interface UserRepository {
