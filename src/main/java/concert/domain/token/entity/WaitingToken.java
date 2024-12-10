@@ -47,7 +47,7 @@ public class WaitingToken {
                 .userId(userId)
                 .tokenStatus(tokenStatus)
                 .createdAt(now)
-                .expiredAt(now)
+                .expiredAt(now.plusMinutes(expirationMinutes))
                 .build();
     }
 

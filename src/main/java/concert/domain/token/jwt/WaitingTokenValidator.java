@@ -19,8 +19,6 @@ public class WaitingTokenValidator {
 
     private final WaitingTokenRepository waitingTokenRepository;
 
-    private static final String SECRET_KEY = "concert";
-
     public Long isTokenActive(String jwtToken) {
         if (jwtToken == null) {
             throw new BusinessException("토큰이 존재하지 않습니다.");
@@ -40,7 +38,7 @@ public class WaitingTokenValidator {
 
     private DecodedJWT verifyToken(String token) {
         try {
-            return JWT.require(Algorithm.HMAC512(SECRET_KEY))
+            return JWT.require(Algorithm.HMAC512(WaitingTokenUtil.SECRET_KEY))
                     .build()
                     .verify(token);
         } catch (JWTVerificationException e) {
@@ -58,8 +56,6 @@ public class WaitingTokenValidator {
 
         if (waitingToken.getTokenStatus().equals(TokenStatus.EXPIRED)) {
             throw new BusinessException("토큰이 만료되었습니다.");
-        } else if (waitingToken.getTokenStatus().equals(TokenStatus.WAIT)) {
-            throw new BusinessException("대기열 대기중입니다. 잠시만 기다려주세요.");
         }
     }
 }

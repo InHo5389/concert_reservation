@@ -5,12 +5,10 @@ import com.auth0.jwt.algorithms.Algorithm;
 import concert.domain.token.entity.WaitingToken;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
-import static concert.domain.token.jwt.WatingTokenUtil.*;
+import static concert.domain.token.jwt.WaitingTokenUtil.*;
 
 @Component
 public class WaitingTokenProvider {

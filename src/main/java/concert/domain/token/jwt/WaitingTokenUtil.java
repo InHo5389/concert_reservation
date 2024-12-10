@@ -1,7 +1,7 @@
 package concert.domain.token.jwt;
 
-public interface WatingTokenUtil {
+public interface WaitingTokenUtil {
     String SECRET_KEY = "concert";
     String TOKEN_PREFIX = "Bearer ";
-    String HEADER = "WatingToken";
+    String HEADER = "WaitingToken";
 }
