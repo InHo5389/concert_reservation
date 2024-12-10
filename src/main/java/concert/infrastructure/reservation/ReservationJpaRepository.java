@@ -1,6 +1,6 @@
 package concert.infrastructure.reservation;
 
-import concert.domain.reservation.Reservation;
+import concert.domain.reservation.entity.Reservation;
 import concert.domain.reservation.ReservationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 

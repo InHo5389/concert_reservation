@@ -1,6 +1,6 @@
 package concert.application.dto;
 
-import concert.domain.concert.Seat;
+import concert.domain.concert.entity.Seat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

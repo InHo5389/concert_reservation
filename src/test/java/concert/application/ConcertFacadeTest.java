@@ -1,42 +1,28 @@
 package concert.application;
 
 
-import concert.domain.concert.Concert;
+import concert.domain.concert.entity.Concert;
 import concert.domain.concert.ConcertRepository;
-import concert.domain.concert.ConcertSchedule;
+import concert.domain.concert.entity.ConcertSchedule;
 import concert.domain.concert.ConcertService;
 
-import concert.common.exception.BusinessException;
-import concert.domain.concert.*;
-import concert.domain.token.TokenStatus;
-import concert.domain.token.WaitingToken;
 import concert.domain.token.WaitingTokenRepository;
 import concert.domain.token.jwt.WaitingTokenProvider;
 import concert.domain.token.jwt.WaitingTokenValidator;
-import concert.domain.user.User;
+import concert.domain.user.entity.User;
 import concert.domain.user.UserRepository;
-
-import org.junit.jupiter.api.AfterEach;
-
-import concert.infrastructure.token.WatingTokenJpaRepository;
-import org.assertj.core.api.Assertions;
-import org.assertj.core.groups.Tuple;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest

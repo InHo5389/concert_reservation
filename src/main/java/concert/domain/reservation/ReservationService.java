@@ -1,10 +1,10 @@
 package concert.domain.reservation;
 
 import concert.common.exception.BusinessException;
-import concert.domain.concert.SeatStatus;
+import concert.domain.reservation.entity.Payment;
+import concert.domain.reservation.entity.Reservation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

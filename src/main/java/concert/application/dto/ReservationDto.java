@@ -1,8 +1,5 @@
 package concert.application.dto;
 
-import concert.domain.concert.Seat;
-import concert.domain.reservation.Reservation;
-import concert.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -2,15 +2,12 @@ package concert.domain.token.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import concert.common.exception.BusinessException;
 import concert.domain.token.TokenStatus;
-import concert.domain.token.WaitingToken;
+import concert.domain.token.entity.WaitingToken;
 import concert.domain.token.WaitingTokenRepository;
-import concert.domain.token.dto.WaitingOrderDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

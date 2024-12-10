@@ -1,9 +1,7 @@
 package concert.application;
 
-import concert.domain.token.WaitingTokenService;
-import concert.domain.token.jwt.WaitingTokenValidator;
-import concert.domain.user.AmountChargeDto;
-import concert.domain.user.AmountGetDto;
+import concert.domain.user.dto.AmountChargeDto;
+import concert.domain.user.dto.AmountGetDto;
 import concert.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

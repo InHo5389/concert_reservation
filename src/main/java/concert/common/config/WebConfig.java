@@ -1,7 +1,7 @@
 package concert.common.config;
 
-import concert.controller.interceptor.AuthUserIdArgumentResolver;
-import concert.controller.interceptor.WaitingTokenInterceptor;
+import concert.api.interceptor.AuthUserIdArgumentResolver;
+import concert.api.interceptor.WaitingTokenInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

@@ -1,6 +1,6 @@
 package concert.infrastructure.user;
 
-import concert.domain.user.User;
+import concert.domain.user.entity.User;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;

@@ -3,6 +3,7 @@ package concert.domain.token;
 import concert.common.exception.BusinessException;
 import concert.domain.token.dto.WaitingOrderDto;
 import concert.domain.token.dto.WaitingTokenIssueTokenDto;
+import concert.domain.token.entity.WaitingToken;
 import concert.domain.token.jwt.WaitingTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

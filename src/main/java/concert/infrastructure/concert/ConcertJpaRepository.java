@@ -1,6 +1,6 @@
 package concert.infrastructure.concert;
 
-import concert.domain.concert.Concert;
+import concert.domain.concert.entity.Concert;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

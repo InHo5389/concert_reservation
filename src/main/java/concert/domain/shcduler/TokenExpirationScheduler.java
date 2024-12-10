@@ -2,12 +2,12 @@ package concert.domain.shcduler;
 
 import concert.common.exception.BusinessException;
 import concert.domain.concert.ConcertRepository;
-import concert.domain.concert.Seat;
-import concert.domain.reservation.Reservation;
+import concert.domain.concert.entity.Seat;
+import concert.domain.reservation.entity.Reservation;
 import concert.domain.reservation.ReservationRepository;
 import concert.domain.reservation.ReservationStatus;
 import concert.domain.token.TokenStatus;
-import concert.domain.token.WaitingToken;
+import concert.domain.token.entity.WaitingToken;
 import concert.domain.token.WaitingTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,11 +1,10 @@
 package concert.infrastructure.token;
 
 import concert.domain.token.TokenStatus;
-import concert.domain.token.WaitingToken;
+import concert.domain.token.entity.WaitingToken;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;

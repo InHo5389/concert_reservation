@@ -1,9 +1,8 @@
 package concert.infrastructure.user;
 
-import concert.domain.user.AmountHistory;
-import concert.domain.user.User;
+import concert.domain.user.entity.AmountHistory;
+import concert.domain.user.entity.User;
 import concert.domain.user.UserRepository;
-import concert.infrastructure.user.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +13,7 @@ import java.util.Optional;
 public class UserRepositoryImpl implements UserRepository {
 
     private final UserJpaRepository userJpaRepository;
-    private final AmountJpaHistory amountJpaHistory;
+    private final AmountHistoryJpaRepository amountHistoryJpaRepository;
     @Override
     public Optional<User> findById(Long id) {
         return userJpaRepository.findById(id);
@@ -32,7 +31,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public AmountHistory save(AmountHistory amountHistory) {
-        return amountJpaHistory.save(amountHistory);
+        return amountHistoryJpaRepository.save(amountHistory);
     }
 
 

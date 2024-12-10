@@ -1,7 +1,7 @@
 package concert.infrastructure.token;
 
 import concert.domain.token.TokenStatus;
-import concert.domain.token.WaitingToken;
+import concert.domain.token.entity.WaitingToken;
 import concert.domain.token.WaitingTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

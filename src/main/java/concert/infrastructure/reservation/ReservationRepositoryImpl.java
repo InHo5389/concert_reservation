@@ -1,11 +1,10 @@
 package concert.infrastructure.reservation;
 
-import concert.domain.reservation.Payment;
-import concert.domain.reservation.Reservation;
+import concert.domain.reservation.entity.Payment;
+import concert.domain.reservation.entity.Reservation;
 import concert.domain.reservation.ReservationRepository;
 import concert.domain.reservation.ReservationStatus;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;

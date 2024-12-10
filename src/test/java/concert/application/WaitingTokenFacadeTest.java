@@ -2,12 +2,12 @@ package concert.application;
 
 import concert.common.exception.BusinessException;
 import concert.domain.token.TokenStatus;
-import concert.domain.token.WaitingToken;
+import concert.domain.token.entity.WaitingToken;
 import concert.domain.token.WaitingTokenRepository;
 import concert.domain.token.dto.WaitingOrderDto;
 import concert.domain.token.dto.WaitingTokenIssueTokenDto;
 import concert.domain.token.jwt.WaitingTokenProvider;
-import concert.domain.user.User;
+import concert.domain.user.entity.User;
 import concert.domain.user.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
