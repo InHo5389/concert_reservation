@@ -1,6 +1,7 @@
 package concert.domain.token;
 
 import concert.common.exception.BusinessException;
+import concert.domain.common.TokenUtil;
 import concert.domain.token.dto.WaitingOrderDto;
 import concert.domain.token.dto.WaitingTokenIssueTokenDto;
 import concert.domain.token.entity.WaitingToken;
@@ -19,17 +20,13 @@ public class WaitingTokenService {
     private final WaitingTokenRepository waitingTokenRepository;
     private final WaitingTokenProvider tokenProvider;
 
-    private static final int EXPIRATION_MINUTES = 5;
-    private static final int FIX_ACTIVE_COUNT = 30;
-
-
     public WaitingTokenIssueTokenDto issueToken(Long userId) {
         log.info("WaitingTokenService issueToken(): userId={}",userId);
         int activeCount = waitingTokenRepository.countByTokenStatus(ACTIVE);
-        WaitingToken issuedWaitingToken = WaitingToken.issue(userId, activeCount, FIX_ACTIVE_COUNT, EXPIRATION_MINUTES);
+        WaitingToken issuedWaitingToken = WaitingToken.issue(userId, activeCount, TokenUtil.FIX_ACTIVE_COUNT, TokenUtil.EXPIRATION_MINUTES);
         WaitingToken savedWaitingToken = waitingTokenRepository.save(issuedWaitingToken);
 
-        String jwtToken = tokenProvider.issueToken(userId,issuedWaitingToken.getCreatedAt(), EXPIRATION_MINUTES);
+        String jwtToken = tokenProvider.issueToken(savedWaitingToken);
 
         return WaitingTokenIssueTokenDto.from(savedWaitingToken, jwtToken);
     }

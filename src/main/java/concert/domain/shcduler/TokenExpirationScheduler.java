@@ -1,6 +1,7 @@
 package concert.domain.shcduler;
 
 import concert.common.exception.BusinessException;
+import concert.domain.common.TokenUtil;
 import concert.domain.concert.ConcertRepository;
 import concert.domain.concert.entity.Seat;
 import concert.domain.reservation.entity.Reservation;
@@ -55,13 +56,15 @@ public class TokenExpirationScheduler {
         int activeTokenCount = waitingTokenRepository.countByTokenStatus(TokenStatus.ACTIVE);
         log.info("Current active token count: {}", activeTokenCount);
 
-        if (activeTokenCount < 50) {
-            int tokensToActivate = 50 - activeTokenCount;
+        int fixActiveCount = TokenUtil.FIX_ACTIVE_COUNT;
+
+        if (activeTokenCount < fixActiveCount) {
+            int tokensToActivate = fixActiveCount - activeTokenCount;
             PageRequest pageRequest = PageRequest.of(0, tokensToActivate);
             List<WaitingToken> waitingTokens = waitingTokenRepository.findByTokenStatusOrderByCreatedAt(TokenStatus.WAIT, pageRequest);
 
             for (WaitingToken token : waitingTokens) {
-                token.activate();
+                token.activate(TokenUtil.EXPIRATION_MINUTES);
                 log.info("Activated token: {}", token.getId());
             }
 
