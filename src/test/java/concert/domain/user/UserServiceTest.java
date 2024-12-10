@@ -39,7 +39,7 @@ class UserServiceTest {
         AmountChargeDto amountHistory = userService.chargeAmount(user.getId(), chargeAmount);
 
         //then
-        Assertions.assertThat(amountHistory.amountHistory).extracting("useAmount", "remainAmount", "status")
+        Assertions.assertThat(amountHistory).extracting("useAmount", "remainAmount", "status")
                 .contains(chargeAmount, chargeAmount + userAmount, AmountStatus.CHARGE);
     }
 }
