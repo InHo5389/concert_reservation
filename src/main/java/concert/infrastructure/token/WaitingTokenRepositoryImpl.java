@@ -39,7 +39,7 @@ public class WaitingTokenRepositoryImpl implements WaitingTokenRepository {
 
     @Override
     public List<WaitingToken> findByExpiredAtBeforeAndTokenStatus(LocalDateTime now, TokenStatus status) {
-        return watingTokenJpaRepository.findByExpiredAtBeforeAndTokenStatus(now,status);
+        return watingTokenJpaRepository.findByExpiredAtBeforeAndTokenStatus(now, status);
     }
 
     @Override
@@ -49,7 +49,21 @@ public class WaitingTokenRepositoryImpl implements WaitingTokenRepository {
 
     @Override
     public List<WaitingToken> findByTokenStatusOrderByCreatedAt(TokenStatus status, Pageable pageable) {
-        return watingTokenJpaRepository.findByTokenStatusOrderByCreatedAt(status,pageable);
+        return watingTokenJpaRepository.findByTokenStatusOrderByCreatedAt(status, pageable);
     }
 
+    @Override
+    public Optional<WaitingToken> findFirstByUserIdAndTokenStatusInOrderByCreatedAtDesc(Long userId, List<TokenStatus> statuses) {
+        return watingTokenJpaRepository.findFirstByUserIdAndTokenStatusInOrderByCreatedAtDesc(userId, statuses);
+    }
+
+    @Override
+    public Optional<WaitingToken> findFirstByUserIdOrderByCreatedAtDesc(Long userId) {
+        return watingTokenJpaRepository.findFirstByUserIdOrderByCreatedAtDesc(userId);
+    }
+
+    @Override
+    public long countByTokenStatusAndCreatedAtLessThanEqual(TokenStatus tokenStatus, LocalDateTime createdAt) {
+        return watingTokenJpaRepository.countByTokenStatusAndCreatedAtLessThanEqual(tokenStatus,createdAt);
+    }
 }

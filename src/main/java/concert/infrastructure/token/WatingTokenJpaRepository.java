@@ -22,4 +22,9 @@ public interface WatingTokenJpaRepository extends JpaRepository<WaitingToken,Lon
 
     @Query("SELECT w FROM WaitingToken w WHERE w.tokenStatus = :tokenStatus ORDER BY w.createdAt")
     List<WaitingToken> findByTokenStatusOrderByCreatedAt(TokenStatus tokenStatus, Pageable pageable);
+
+    Optional<WaitingToken> findFirstByUserIdAndTokenStatusInOrderByCreatedAtDesc(Long userId, List<TokenStatus> statuses);
+    Optional<WaitingToken> findFirstByUserIdOrderByCreatedAtDesc(Long userId);
+    long countByTokenStatusAndCreatedAtLessThanEqual(TokenStatus tokenStatus, LocalDateTime createdAt);
+
 }

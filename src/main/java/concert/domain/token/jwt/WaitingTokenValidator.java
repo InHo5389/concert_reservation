@@ -51,7 +51,7 @@ public class WaitingTokenValidator {
     }
 
     private void validateTokenStatus(Long userId) {
-        WaitingToken waitingToken = waitingTokenRepository.findByUserId(userId)
+        WaitingToken waitingToken = waitingTokenRepository.findFirstByUserIdOrderByCreatedAtDesc(userId)
                 .orElseThrow(() -> new BusinessException("토큰이 존재하지 않습니다."));
 
         if (waitingToken.getTokenStatus().equals(TokenStatus.EXPIRED)) {
