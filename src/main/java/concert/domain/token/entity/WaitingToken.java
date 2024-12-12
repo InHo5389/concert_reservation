@@ -29,19 +29,11 @@ public class WaitingToken {
     private LocalDateTime createdAt;
     private LocalDateTime expiredAt;
 
-    public static WaitingToken issue(Long userId, int activeTokenCount,int fixActiveCount ,int expirationMinutes) {
-        log.info("WaitingToken issue: userId={}",userId);
+    public static WaitingToken issue(Long userId, int activeTokenCount,
+                                     int fixActiveCount, int expirationMinutes) {
+        log.info("WaitingToken issue: userId={}", userId);
         LocalDateTime now = LocalDateTime.now();
-        TokenStatus tokenStatus = validTokenStatus(activeTokenCount, fixActiveCount);
-
-        if (tokenStatus.equals(TokenStatus.ACTIVE)){
-            return  WaitingToken.builder()
-                    .userId(userId)
-                    .tokenStatus(tokenStatus)
-                    .createdAt(now)
-                    .expiredAt(now.plusMinutes(expirationMinutes))
-                    .build();
-        }
+        TokenStatus tokenStatus = determineTokenStatus(activeTokenCount, fixActiveCount);
 
         return WaitingToken.builder()
                 .userId(userId)
@@ -51,7 +43,7 @@ public class WaitingToken {
                 .build();
     }
 
-    private static TokenStatus validTokenStatus(int activeTokenCount,int fixActiveCount) {
+    private static TokenStatus determineTokenStatus(int activeTokenCount, int fixActiveCount) {
         return activeTokenCount < fixActiveCount ? TokenStatus.ACTIVE : TokenStatus.WAIT;
     }
 
@@ -63,5 +55,6 @@ public class WaitingToken {
 
     public void expire() {
         this.tokenStatus = TokenStatus.EXPIRED;
+        this.expiredAt = LocalDateTime.now();
     }
 }

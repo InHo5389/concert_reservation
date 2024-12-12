@@ -10,7 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import static concert.domain.token.TokenStatus.*;
+import java.util.Arrays;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -21,39 +22,60 @@ public class WaitingTokenService {
     private final WaitingTokenProvider tokenProvider;
 
     public WaitingTokenIssueTokenDto issueToken(Long userId) {
-        log.info("WaitingTokenService issueToken(): userId={}",userId);
-        int activeCount = waitingTokenRepository.countByTokenStatus(ACTIVE);
-        WaitingToken issuedWaitingToken = WaitingToken.issue(userId, activeCount, TokenUtil.FIX_ACTIVE_COUNT, TokenUtil.EXPIRATION_MINUTES);
-        WaitingToken savedWaitingToken = waitingTokenRepository.save(issuedWaitingToken);
+        log.info("WaitingTokenService issueToken(): userId={}", userId);
 
-        String jwtToken = tokenProvider.issueToken(savedWaitingToken);
+        // ACTIVE나 WAIT 상태의 토큰 조회
+        Optional<WaitingToken> activeOrWaitToken = waitingTokenRepository
+                .findFirstByUserIdAndTokenStatusInOrderByCreatedAtDesc(
+                        userId,
+                        Arrays.asList(TokenStatus.ACTIVE, TokenStatus.WAIT)
+                );
 
-        return WaitingTokenIssueTokenDto.from(savedWaitingToken, jwtToken);
+        if (activeOrWaitToken.isPresent()) {
+            WaitingToken existingToken = activeOrWaitToken.get();
+            existingToken.expire();
+            waitingTokenRepository.save(existingToken);
+        }
+
+        // 신규 토큰 발급
+        int activeCount = waitingTokenRepository.countByTokenStatus(TokenStatus.ACTIVE);
+        WaitingToken newToken = WaitingToken.issue(
+                userId,
+                activeCount,
+                TokenUtil.FIX_ACTIVE_COUNT,
+                TokenUtil.EXPIRATION_MINUTES
+        );
+
+        WaitingToken savedToken = waitingTokenRepository.save(newToken);
+        String jwtToken = tokenProvider.issueToken(savedToken);
+
+        return WaitingTokenIssueTokenDto.from(savedToken, jwtToken);
     }
 
-    public WaitingOrderDto getWaitingOrder(Long userId){
-        log.info("WaitingTokenService verifyAndGetWaitingOrder(): userId={}",userId);
+    public WaitingOrderDto getWaitingOrder(Long userId) {
+        log.info("WaitingTokenService verifyAndGetWaitingOrder(): userId={}", userId);
         return calculateWaitingOrder(userId);
     }
 
     private WaitingOrderDto calculateWaitingOrder(Long userId) {
-        WaitingToken waitingToken = getWaitingTokenByUserId(userId);
+        WaitingToken waitingToken = waitingTokenRepository
+                .findFirstByUserIdOrderByCreatedAtDesc(userId)
+                .orElseThrow(() -> new BusinessException("토큰이 존재하지 않습니다."));
 
-        if (waitingToken.getTokenStatus().equals(ACTIVE)) {
-            log.info("WaitingToken Acive");
+        if (waitingToken.getTokenStatus().equals(TokenStatus.ACTIVE)) {
+            log.info("WaitingToken Active");
             return WaitingOrderDto.active();
-        }else if (waitingToken.getTokenStatus().equals(EXPIRED)) {
+        } else if (waitingToken.getTokenStatus().equals(TokenStatus.EXPIRED)) {
             log.info("WaitingToken Invalid");
             return WaitingOrderDto.invalid();
         }
 
-        long lastActiveTokenNum = waitingTokenRepository.findLastActiveTokenBy(userId);
-        long waitingOrder = waitingToken.getId() - lastActiveTokenNum;
-        return WaitingOrderDto.waiting(waitingOrder);
-    }
+        long myWaitingOrder = waitingTokenRepository
+                .countByTokenStatusAndCreatedAtLessThanEqual(
+                        TokenStatus.WAIT,
+                        waitingToken.getCreatedAt()
+                );
 
-    private WaitingToken getWaitingTokenByUserId(Long userId) {
-        return waitingTokenRepository.findByUserId(userId)
-                .orElseThrow(() -> new BusinessException("토큰이 존재하지 않습니다."));
+        return WaitingOrderDto.waiting(myWaitingOrder);
     }
 }
