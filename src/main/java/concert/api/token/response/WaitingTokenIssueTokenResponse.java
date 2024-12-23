@@ -15,20 +15,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class WaitingTokenIssueTokenResponse {
 
-    private Long id;
     private Long userId;
     private TokenStatus tokenStatus;
-    private LocalDateTime createdAt;
-    private LocalDateTime expiredAt;
     private String jwtToken;
 
     public static WaitingTokenIssueTokenResponse of(WaitingTokenIssueTokenDto dto){
         return WaitingTokenIssueTokenResponse.builder()
-                .id(dto.getId())
                 .userId(dto.getUserId())
                 .tokenStatus(dto.getTokenStatus())
-                .createdAt(dto.getCreatedAt())
-                .expiredAt(dto.getExpiredAt())
                 .jwtToken(dto.getJwtToken())
                 .build();
     }

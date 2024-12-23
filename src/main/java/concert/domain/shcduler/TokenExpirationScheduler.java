@@ -1,75 +1,65 @@
 package concert.domain.shcduler;
 
 import concert.common.exception.BusinessException;
-import concert.domain.common.TokenUtil;
 import concert.domain.concert.ConcertRepository;
 import concert.domain.concert.entity.Seat;
-import concert.domain.reservation.entity.Reservation;
 import concert.domain.reservation.ReservationRepository;
 import concert.domain.reservation.ReservationStatus;
-import concert.domain.token.TokenStatus;
-import concert.domain.token.entity.WaitingToken;
-import concert.domain.token.WaitingTokenRepository;
+import concert.domain.reservation.entity.Reservation;
+import concert.domain.token.WaitingTokenRedisRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class TokenExpirationScheduler {
 
-    private final WaitingTokenRepository waitingTokenRepository;
+    private static final int PROMOTION_SIZE = 50;  // 20초마다 50명씩 처리
+
+    private final WaitingTokenRedisRepository waitingTokenRedisRepository;
     private final ReservationRepository reservationRepository;
     private final ConcertRepository concertRepository;
 
     /**
-     * 만료된 토큰 상태를 EXPIRED 변경하는 스케줄러
+     * redis - wait대기열을 20초마다 50명 active 대기열로 넘겨주는 스케줄러
      */
-    @Scheduled(fixedRate = 60000) // 1분마다 실행
-    @Transactional
-    public void expireTokens() {
-        LocalDateTime now = LocalDateTime.now();
-        List<WaitingToken> expiredTokens = waitingTokenRepository.findByExpiredAtBeforeAndTokenStatus(now, TokenStatus.ACTIVE);
+    @Scheduled(fixedRate = 20000) // 20초마다 실행
+    public void promoteWaitingToActive() {
+        log.info("Promoting waiting tokens to active...");
 
-        for (WaitingToken token : expiredTokens) {
-            token.expire();
-            log.info("Token expired: {}", token.getId());
+        Set<String> waitingTokens = waitingTokenRedisRepository.getWaitingTokens(PROMOTION_SIZE);
+        if (waitingTokens.isEmpty()) {
+            return;
         }
 
-        waitingTokenRepository.saveAll(expiredTokens);
-        log.info("Expired {} tokens", expiredTokens.size());
+        LocalDateTime expiredAt = LocalDateTime.now().plusMinutes(5);
+        for (String userId : waitingTokens) {
+            waitingTokenRedisRepository.addToActiveQueue(Long.parseLong(userId), expiredAt);
+        }
+
+        waitingTokenRedisRepository.removeFromWaitingQueue(waitingTokens);
     }
 
     /**
-     * WAIT토큰을 대기열 입장 개수만큼 맞춰서 ACTIVE토큰을 바꾸어주는 스케줄러
+     * 대기열을 나간 사용자들을 정리하는 스케줄러
      */
-    @Scheduled(fixedRate = 30000) // 30초마다 실행
-    @Transactional
-    public void manageActiveTokens() {
-        int activeTokenCount = waitingTokenRepository.countByTokenStatus(TokenStatus.ACTIVE);
-        log.info("Current active token count: {}", activeTokenCount);
+    @Scheduled(cron = "0 50 23 * * ?")
+    public void cleanupAbandonedActiveQueue() {
+        log.info("Cleaning up abandoned active queue members");
 
-        int fixActiveCount = TokenUtil.FIX_ACTIVE_COUNT;
+        Set<String> activeUsers = waitingTokenRedisRepository.getAllActiveUsers();
 
-        if (activeTokenCount < fixActiveCount) {
-            int tokensToActivate = fixActiveCount - activeTokenCount;
-            PageRequest pageRequest = PageRequest.of(0, tokensToActivate);
-            List<WaitingToken> waitingTokens = waitingTokenRepository.findByTokenStatusOrderByCreatedAt(TokenStatus.WAIT, pageRequest);
-
-            for (WaitingToken token : waitingTokens) {
-                token.activate(TokenUtil.EXPIRATION_MINUTES);
-                log.info("Activated token: {}", token.getId());
-            }
-
-            waitingTokenRepository.saveAll(waitingTokens);
-            log.info("Activated {} tokens", waitingTokens.size());
+        for (String userId : activeUsers) {
+            waitingTokenRedisRepository.removeFromActiveQueue(Long.parseLong(userId));
+            log.info("Removed abandoned user from waiting queue: {}", userId);
         }
     }
 
@@ -87,7 +77,7 @@ public class TokenExpirationScheduler {
                     .orElseThrow(() -> new BusinessException("해당 좌석이 없습니다."));
             seat.seatStatusAvailable();
             reservationRepository.delete(reservation);
-            log.info("Deleted reservation: {}",reservation.getId());
+            log.info("Deleted reservation: {}", reservation.getId());
         }
     }
 }

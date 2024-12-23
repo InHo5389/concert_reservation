@@ -3,6 +3,7 @@ package concert.domain.reservation;
 import concert.common.exception.BusinessException;
 import concert.domain.reservation.entity.Payment;
 import concert.domain.reservation.entity.Reservation;
+import concert.domain.token.WaitingTokenRedisRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
+    private final WaitingTokenRedisRepository waitingTokenRedisRepository;
 
     private static final int FIXED_EXPIRED_MINUTES = 5;
 
@@ -44,6 +46,8 @@ public class ReservationService {
         }
 
         Reservation reservation = Reservation.createReservation(seatId, concertDate, FIXED_EXPIRED_MINUTES, userId, seatPrice);
+
+        waitingTokenRedisRepository.removeFromActiveQueue(userId);
 
         return reservationRepository.save(reservation);
 
