@@ -9,52 +9,51 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @Getter
-@Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class WaitingToken {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     private Long userId;
-
-    @Enumerated(EnumType.STRING)
+    private double score;
     private TokenStatus tokenStatus;
-    private LocalDateTime createdAt;
     private LocalDateTime expiredAt;
 
-    public static WaitingToken issue(Long userId, int activeTokenCount,
-                                     int fixActiveCount, int expirationMinutes) {
-        log.info("WaitingToken issue: userId={}", userId);
+    public static WaitingToken createWaitingToken(Long userId) {
         LocalDateTime now = LocalDateTime.now();
-        TokenStatus tokenStatus = determineTokenStatus(activeTokenCount, fixActiveCount);
+        double score = Double.parseDouble(
+                now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
+        );
 
         return WaitingToken.builder()
                 .userId(userId)
-                .tokenStatus(tokenStatus)
-                .createdAt(now)
-                .expiredAt(now.plusMinutes(expirationMinutes))
+                .tokenStatus(TokenStatus.WAIT)
+                .score(score)
                 .build();
     }
 
-    private static TokenStatus determineTokenStatus(int activeTokenCount, int fixActiveCount) {
-        return activeTokenCount < fixActiveCount ? TokenStatus.ACTIVE : TokenStatus.WAIT;
-    }
-
-    public void activate(int expirationMinutes) {
+    public static WaitingToken createActiveToken(Long userId, int expirationMinutes) {
         LocalDateTime now = LocalDateTime.now();
-        this.tokenStatus = TokenStatus.ACTIVE;
-        this.expiredAt = now.plusMinutes(expirationMinutes);
+        double score = Double.parseDouble(
+                now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
+        );
+
+        return WaitingToken.builder()
+                .userId(userId)
+                .tokenStatus(TokenStatus.ACTIVE)
+                .expiredAt(now.plusMinutes(expirationMinutes))
+                .score(score)
+                .build();
     }
 
-    public void expire() {
-        this.tokenStatus = TokenStatus.EXPIRED;
-        this.expiredAt = LocalDateTime.now();
+    public String formatForRedis() {
+        return String.format("%d:%s",
+                userId,
+                expiredAt.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
+        );
     }
 }

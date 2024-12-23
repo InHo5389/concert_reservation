@@ -1,5 +1,7 @@
 package concert.domain.token.jwt;
 
+import concert.domain.token.TokenStatus;
+import concert.domain.token.entity.WaitingToken;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +18,7 @@ class WaitingTokenProviderTest {
         LocalDateTime now = LocalDateTime.now();
         //when
         WaitingTokenProvider tokenProvider = new WaitingTokenProvider();
-        String jwtToken = tokenProvider.issueToken(1L, now, 5);
+        String jwtToken = tokenProvider.issueToken(new WaitingToken(1L,1L, TokenStatus.WAIT,now,now));
         //then
         assertThat(jwtToken).contains("Bearer");
         String[] split = jwtToken.split(" ");

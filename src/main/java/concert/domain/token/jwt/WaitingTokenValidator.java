@@ -5,9 +5,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import concert.common.exception.BusinessException;
-import concert.domain.token.TokenStatus;
-import concert.domain.token.entity.WaitingToken;
-import concert.domain.token.WaitingTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -17,8 +14,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class WaitingTokenValidator {
 
-    private final WaitingTokenRepository waitingTokenRepository;
-
     public Long isTokenActive(String jwtToken) {
         if (jwtToken == null) {
             throw new BusinessException("토큰이 존재하지 않습니다.");
@@ -27,7 +22,6 @@ public class WaitingTokenValidator {
         String token = removeBearer(jwtToken);
         DecodedJWT decodedJWT = verifyToken(token);
         Long userId = extractUserId(decodedJWT);
-        validateTokenStatus(userId);
 
         return userId;
     }
@@ -48,15 +42,6 @@ public class WaitingTokenValidator {
 
     private Long extractUserId(DecodedJWT decodedJWT) {
         return decodedJWT.getClaim("userId").asLong();
-    }
-
-    private void validateTokenStatus(Long userId) {
-        WaitingToken waitingToken = waitingTokenRepository.findFirstByUserIdOrderByCreatedAtDesc(userId)
-                .orElseThrow(() -> new BusinessException("토큰이 존재하지 않습니다."));
-
-        if (waitingToken.getTokenStatus().equals(TokenStatus.EXPIRED)) {
-            throw new BusinessException("토큰이 만료되었습니다.");
-        }
     }
 }
 

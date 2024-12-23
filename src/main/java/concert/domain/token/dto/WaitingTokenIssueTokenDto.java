@@ -11,15 +11,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class WaitingTokenIssueTokenDto {
 
-    private Long id;
     private Long userId;
     private TokenStatus tokenStatus;
-    private LocalDateTime createdAt;
-    private LocalDateTime expiredAt;
     private String jwtToken;
 
-    public static WaitingTokenIssueTokenDto from(WaitingToken waitingToken,String jwtToken){
-        return new WaitingTokenIssueTokenDto(waitingToken.getId(), waitingToken.getUserId(), waitingToken.getTokenStatus(),
-                waitingToken.getCreatedAt(), waitingToken.getExpiredAt(), jwtToken);
+    public static WaitingTokenIssueTokenDto of(Long userId, TokenStatus tokenStatus, String jwtToken) {
+        return new WaitingTokenIssueTokenDto(userId,tokenStatus,jwtToken);
     }
 }
